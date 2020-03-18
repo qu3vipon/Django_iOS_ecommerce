@@ -40,6 +40,24 @@ SECRETS = json.loads(SECRETS_STRING)
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = SECRETS['SECRET_KEY']
 
+# S3
+AWS_STORAGE_BUCKET_NAME = SECRETS['AWS_STORAGE_BUCKET_NAME']
+AWS_DEFAULT_ACL = None
+AWS_S3_REGION_NAME = SECRETS['AWS_S3_REGION_NAME']
+AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.{AWS_S3_REGION_NAME}.amazonaws.com'
+
+# s3 static settings
+STATIC_LOCATION = 'static'
+STATIC_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/{STATIC_LOCATION}/'
+STATICFILES_STORAGE = 'config.storages.S3StaticStorage'
+
+# s3 media settings
+MEDIA_LOCATION = 'media'
+MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/{MEDIA_LOCATION}/'
+DEFAULT_FILE_STORAGE = 'config.storages.S3MediaStorage'
+
+STATICFILES_DIRS = (os.path.join(BASE_DIR, 'static'),)
+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
@@ -54,6 +72,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    'storages',
 
     'kurly.apps.KurlyConfig',
 ]
@@ -127,4 +147,3 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 
-STATIC_URL = '/static/'
