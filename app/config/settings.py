@@ -9,9 +9,10 @@ https://docs.djangoproject.com/en/2.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/2.2/ref/settings/
 """
-
 import json
 import os
+
+import boto3
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -20,15 +21,29 @@ ROOT_DIR = os.path.dirname(BASE_DIR)
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.2/howto/deployment/checklist/
 
-SECRETS = json.load(open(os.path.join(ROOT_DIR, 'secrets.json')))
+secret_name = 'WPSiOS'
+region_name = 'ap-northeast-2'
+
+session = boto3.session.Session(
+    profile_name='WPSiOS',
+    region_name=region_name
+)
+
+client = session.client(
+    service_name='secretsmanager',
+    region_name=region_name,
+)
+
+SECRETS_STRING = client.get_secret_value(SecretId='WPSiOS')['SecretString']
+SECRETS = json.loads(SECRETS_STRING)
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = SECRETS["SECRET_KEY"]
+SECRET_KEY = SECRETS['SECRET_KEY']
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 # Application definition
 
