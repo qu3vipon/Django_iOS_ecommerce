@@ -59,7 +59,7 @@ DEFAULT_FILE_STORAGE = 'config.storages.S3MediaStorage'
 STATICFILES_DIRS = (os.path.join(BASE_DIR, 'static'),)
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 
@@ -73,6 +73,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    'rest_framework',
     'storages',
 
     'kurly.apps.KurlyConfig',

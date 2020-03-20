@@ -1,7 +1,14 @@
 # Created by https://www.gitignore.io/api/linux,macos,django,python,windows,pycharm+all
 # Edit at https://www.gitignore.io/?templates=linux,macos,django,python,windows,pycharm+all
+
+### Secrets ###
 *.pem
-secrets.json
+
+### Deploy ###
+deploy.py
+Dockerfile
+.dockerignore
+.config
 
 ### Django ###
 *.log
