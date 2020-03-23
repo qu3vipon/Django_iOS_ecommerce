@@ -4,10 +4,10 @@ description = "The AWS SDK for Python"
 name = "boto3"
 optional = false
 python-versions = "*"
-version = "1.12.23"
+version = "1.12.26"
 
 [package.dependencies]
-botocore = ">=1.15.23,<1.16.0"
+botocore = ">=1.15.26,<1.16.0"
 jmespath = ">=0.7.1,<1.0.0"
 s3transfer = ">=0.3.0,<0.4.0"
 
@@ -17,7 +17,7 @@ description = "Low-level, data-driven core of boto 3."
 name = "botocore"
 optional = false
 python-versions = "*"
-version = "1.15.23"
+version = "1.15.26"
 
 [package.dependencies]
 docutils = ">=0.10,<0.16"
@@ -226,12 +226,12 @@ python-versions = "^3.7"
 
 [metadata.files]
 boto3 = [
-    {file = "boto3-1.12.23-py2.py3-none-any.whl", hash = "sha256:a3a89a254b068dbcc23298dea11d15b9e6e19f825290ebe43fcf4ccbbe423994"},
-    {file = "boto3-1.12.23.tar.gz", hash = "sha256:0080ea1cce4c87d9f1e4e47fed4b994451b0022fcf6e120d1fb653eb3874506d"},
+    {file = "boto3-1.12.26-py2.py3-none-any.whl", hash = "sha256:934057d57331d1f9c969f186533e87f460e97d2127ca2fde0505a234ec9ad286"},
+    {file = "boto3-1.12.26.tar.gz", hash = "sha256:c998a5a8c6ec6ebb4f3fc6884faa0250e511dbc27fee555e422fe6023e0e73ac"},
 ]
 botocore = [
-    {file = "botocore-1.15.23-py2.py3-none-any.whl", hash = "sha256:5b6bf68bd484fbf83e27f56a0a92e38cee223b689121c1184a0292311b88f888"},
-    {file = "botocore-1.15.23.tar.gz", hash = "sha256:e4fc86574043b20267f863b9168bd1c9ed50a53f0f7222ce8c99f64355174515"},
+    {file = "botocore-1.15.26-py2.py3-none-any.whl", hash = "sha256:9a697a5e1fca536d68b13f99545a49f446db622c0c525f0d29609bb875ac0b7a"},
+    {file = "botocore-1.15.26.tar.gz", hash = "sha256:285bd8f8f2258628eb32994505570896c76bdd8f3c7828d2e7749739f9ba07a9"},
 ]
 django = [
     {file = "Django-2.2.11-py3-none-any.whl", hash = "sha256:b51c9c548d5c3b3ccbb133d0bebc992e8ec3f14899bce8936e6fdda6b23a1881"},
