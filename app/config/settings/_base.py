@@ -59,9 +59,6 @@ DEFAULT_FILE_STORAGE = 'config.storages.S3MediaStorage'
 STATICFILES_DIRS = (os.path.join(BASE_DIR, 'static'),)
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-
-ALLOWED_HOSTS = ['*']
 
 AUTH_USER_MODEL = 'members.User'
 
@@ -78,9 +75,6 @@ INSTALLED_APPS = [
     'corsheaders',
     'storages',
     'rest_framework',
-
-    # dev
-    'django_extensions',
 
     'kurly.apps.KurlyConfig',
     'members.apps.MembersConfig',
@@ -122,8 +116,6 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'config.wsgi.application'
-
 # Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
 
@@ -162,4 +154,3 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
-
