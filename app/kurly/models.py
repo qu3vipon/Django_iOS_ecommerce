@@ -8,10 +8,12 @@ class Order(models.Model):
         ('quick', 'Quick'),
         ('normal', 'Normal'),
     ]
+
     PAYMENT_CHOICES = [
         ('card', 'CreditCard'),
         ('cash', 'Cash'),
     ]
+
     created_at = models.DateTimeField(auto_now_add=True)
     buyer = models.ForeignKey(User, on_delete=models.CASCADE)
     receiver = models.CharField(max_length=30)
@@ -22,6 +24,7 @@ class Order(models.Model):
     total_price = models.PositiveIntegerField()
 
     ordered = models.BooleanField(default=False)
+
     payment = models.CharField(choices=PAYMENT_CHOICES, max_length=20)
     payed = models.BooleanField(default=False)
     agreed = models.BooleanField(default=False)
@@ -50,5 +53,3 @@ class OrderProduct(models.Model):
     order = models.ForeignKey(Order, related_name='orderproducts', on_delete=models.CASCADE)
     product = models.OneToOneField(Product, on_delete=models.CASCADE)
     quantity = models.PositiveSmallIntegerField(default=1)
-
-
