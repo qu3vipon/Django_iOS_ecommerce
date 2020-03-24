@@ -20,6 +20,8 @@ class Order(models.Model):
     mobile = models.PositiveIntegerField()
     requirements = models.TextField(blank=True)
     total_price = models.PositiveIntegerField()
+
+    ordered = models.BooleanField(default=False)
     payment = models.CharField(choices=PAYMENT_CHOICES, max_length=20)
     payed = models.BooleanField(default=False)
     agreed = models.BooleanField(default=False)
