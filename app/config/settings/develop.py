@@ -4,5 +4,5 @@ DEBUG = True
 INSTALLED_APPS += [
     'django_extensions'
 ]
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS += ['*']
 WSGI_APPLICATION = 'config.wsgi.develop.application'

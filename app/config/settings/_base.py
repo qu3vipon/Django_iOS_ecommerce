@@ -59,6 +59,8 @@ DEFAULT_FILE_STORAGE = 'config.storages.S3MediaStorage'
 STATICFILES_DIRS = (os.path.join(BASE_DIR, 'static'),)
 
 # SECURITY WARNING: don't run with debug turned on in production!
+DEBUG = False
+ALLOWED_HOSTS = []
 
 AUTH_USER_MODEL = 'members.User'
 
