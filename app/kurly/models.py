@@ -11,7 +11,8 @@ class Order(models.Model):
 
     PAYMENT_CHOICES = [
         ('card', 'CreditCard'),
-        ('cash', 'Cash'),
+        ('mobile', 'Mobile'),
+        ('others', 'Others'),
     ]
 
     created_at = models.DateTimeField(auto_now_add=True)
@@ -20,13 +21,11 @@ class Order(models.Model):
     address = models.CharField(max_length=70)
     delivery = models.CharField(choices=DELIVERY_CHOICES, max_length=20)
     mobile = models.PositiveIntegerField()
-    requirements = models.TextField(blank=True)
+    requirements = models.TextField(max_length=100, blank=True)
     total_price = models.PositiveIntegerField()
 
     ordered = models.BooleanField(default=False)
-
     payment = models.CharField(choices=PAYMENT_CHOICES, max_length=20)
-    payed = models.BooleanField(default=False)
     agreed = models.BooleanField(default=False)
 
 
@@ -44,12 +43,20 @@ class Product(models.Model):
     subcategory = models.OneToOneField(Subcategory, on_delete=models.SET_NULL, null=True)
     price = models.PositiveIntegerField()
     discount_rate = models.DecimalField(max_digits=3, decimal_places=2)
+    sales = models.PositiveIntegerField(default=0)
     stack = models.PositiveSmallIntegerField(default=99)
     image = models.ImageField()
     description = models.TextField(max_length=255)
+    created = models.DateTimeField(auto_now_add=True)
 
 
 class OrderProduct(models.Model):
     order = models.ForeignKey(Order, related_name='orderproducts', on_delete=models.CASCADE)
     product = models.OneToOneField(Product, on_delete=models.CASCADE)
     quantity = models.PositiveSmallIntegerField(default=1)
+
+
+class Option(models.Model):
+    product = models.ForeignKey(Product, related_name='options', on_delete=models.CASCADE)
+    name = models.CharField(max_length=50)
+    price = models.PositiveIntegerField()
