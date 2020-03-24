@@ -94,7 +94,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-# Permissions
+# DRF Settings
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.SessionAuthentication',
@@ -105,8 +105,9 @@ REST_FRAMEWORK = {
     ]
 }
 
-
 ROOT_URLCONF = 'config.urls'
+LOGIN_REDIRECT_URL = '/accounts/list'
+LOGOUT_REDIRECT_URL = '/accounts/list'
 
 TEMPLATES = [
     {
@@ -152,7 +153,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Seoul'
 
 USE_I18N = True
 

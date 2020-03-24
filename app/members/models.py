@@ -10,11 +10,11 @@ class Mobile(models.Model):
 class Address(models.Model):
     address_name = models.CharField(max_length=70)
     road_address = models.CharField(max_length=70)
-    zip_code = models.IntegerField()
+    zip_code = models.PositiveSmallIntegerField()
 
 
 class User(AbstractUser):
     name = models.CharField(max_length=30)
     agreed = models.BooleanField(default=False)
-    mobile = models.OneToOneField(Mobile, null=True, on_delete=models.PROTECT)
-    address = models.OneToOneField(Address, null=True, on_delete=models.PROTECT)
+    mobile = models.OneToOneField(Mobile, null=True, on_delete=models.CASCADE)
+    address = models.OneToOneField(Address, null=True, on_delete=models.CASCADE)

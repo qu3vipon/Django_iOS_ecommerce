@@ -8,4 +8,3 @@ ALLOWED_HOSTS += [
     '15.164.49.32',
 ]
 WSGI_APPLICATION = 'config.wsgi.production.application'
-DATABASES['default']['NAME'] = 'wpsios_prod'
