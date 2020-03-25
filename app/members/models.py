@@ -14,7 +14,14 @@ class Address(models.Model):
 
 
 class User(AbstractUser):
+    GENDER_CHOICES = [
+        ('m', 'Male'),
+        ('f', 'Female'),
+        ('n', 'None'),
+    ]
     name = models.CharField(max_length=30)
     agreed = models.BooleanField(default=False)
     mobile = models.OneToOneField(Mobile, null=True, on_delete=models.CASCADE)
     address = models.OneToOneField(Address, null=True, on_delete=models.CASCADE)
+    birth_date = models.DateField(null=True)
+    gender = models.CharField(max_length=10, choices=GENDER_CHOICES)
