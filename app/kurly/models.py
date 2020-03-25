@@ -44,7 +44,7 @@ class Product(models.Model):
     price = models.PositiveIntegerField()
     discount_rate = models.DecimalField(max_digits=3, decimal_places=2)
     sales = models.PositiveIntegerField(default=0)
-    stack = models.PositiveSmallIntegerField(default=99)
+    stock = models.PositiveSmallIntegerField(default=99)
     image = models.ImageField()
     description = models.TextField(max_length=255)
     created = models.DateTimeField(auto_now_add=True)
@@ -54,6 +54,7 @@ class OrderProduct(models.Model):
     order = models.ForeignKey(Order, related_name='orderproducts', on_delete=models.CASCADE)
     product = models.OneToOneField(Product, on_delete=models.CASCADE)
     quantity = models.PositiveSmallIntegerField(default=1)
+    option = models.PositiveIntegerField(blank=True, null=True)
 
 
 class Option(models.Model):
