@@ -10,7 +10,7 @@ class Mobile(models.Model):
 class Address(models.Model):
     address_name = models.CharField(max_length=70)
     road_address = models.CharField(max_length=70)
-    zip_code = models.PositiveSmallIntegerField()
+    zip_code = models.CharField(max_length=10)  # 카카오 주소 api 우편번호 type: string
 
 
 class User(AbstractUser):
@@ -24,4 +24,4 @@ class User(AbstractUser):
     mobile = models.OneToOneField(Mobile, null=True, on_delete=models.CASCADE)
     address = models.OneToOneField(Address, null=True, on_delete=models.CASCADE)
     birth_date = models.DateField(null=True)
-    gender = models.CharField(max_length=10, choices=GENDER_CHOICES)
+    gender = models.CharField(max_length=10, choices=GENDER_CHOICES, default='n')

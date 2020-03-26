@@ -1,5 +1,6 @@
 from django.db import models
 
+from config.settings import MEDIA_URL
 from members.models import User
 
 
@@ -42,12 +43,21 @@ class Product(models.Model):
     name = models.CharField(max_length=50)
     subcategory = models.OneToOneField(Subcategory, on_delete=models.SET_NULL, null=True)
     price = models.PositiveIntegerField()
+    unit = models.CharField(max_length=10)
+    amount = models.CharField(max_length=30)
+    package = models.CharField(max_length=30)
     discount_rate = models.DecimalField(max_digits=3, decimal_places=2)
+    description = models.TextField(max_length=255)
+
     sales = models.PositiveIntegerField(default=0)
     stock = models.PositiveSmallIntegerField(default=99)
-    image = models.ImageField()
-    description = models.TextField(max_length=255)
     created = models.DateTimeField(auto_now_add=True)
+
+
+class Image(models.Model):
+    name = models.CharField(max_length=100)
+    product = models.ForeignKey(Product, related_name='images', on_delete=models.CASCADE)
+    image = models.ImageField(upload_to=MEDIA_URL)
 
 
 class OrderProduct(models.Model):
