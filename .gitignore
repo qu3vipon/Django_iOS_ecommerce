@@ -5,6 +5,7 @@
 .media
 db_reset.py
 *.pem
+*/crawler.py
 
 ### Deploy ###
 deploy.py
