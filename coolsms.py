@@ -8,8 +8,8 @@ api_secret = SECRETS['API_SECRET']
 
 params = dict()
 params['type'] = 'sms'
-params['to'] = '01038565813'
-params['from'] = '01044321237'
+params['to'] = ''
+params['from'] = ''
 params['text'] = 'Test Message'
 
 cool = Message(api_key, api_secret)
