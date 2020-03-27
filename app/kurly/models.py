@@ -1,7 +1,6 @@
 from django.db import models
 
-from config.settings import MEDIA_URL
-from members.models import User
+from members.models import User, Address
 
 
 class Order(models.Model):
@@ -22,7 +21,7 @@ class Order(models.Model):
     ]
     buyer = models.ForeignKey(User, on_delete=models.CASCADE)
     receiver = models.CharField(max_length=30)
-    address = models.CharField(max_length=70)
+    address = models.OneToOneField(Address, on_delete=models.CASCADE)
     delivery = models.CharField(choices=DELIVERY_CHOICES, max_length=20)
     mobile = models.PositiveIntegerField()
     requirements = models.TextField(max_length=100, blank=True)
