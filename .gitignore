@@ -2,8 +2,10 @@
 # Edit at https://www.gitignore.io/?templates=linux,macos,django,python,windows,pycharm+all
 
 ### Secrets ###
+.media
 db_reset.py
 *.pem
+*/crawler.py
 
 ### Deploy ###
 deploy.py
