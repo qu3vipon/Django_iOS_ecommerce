@@ -16,6 +16,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 
+from config import settings
 from members.views import ObtainTokenView
 
 urlpatterns = [
@@ -24,3 +25,10 @@ urlpatterns = [
     path('accounts/', include('members.urls'), name='accounts'),
     path('api-token-auth/', ObtainTokenView.as_view(), name='token'),
 ]
+
+if settings.DEBUG:
+    import debug_toolbar
+
+    urlpatterns = [
+                      path('__debug__/', include(debug_toolbar.urls)),
+                  ] + urlpatterns
