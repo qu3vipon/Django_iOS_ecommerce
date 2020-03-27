@@ -6,17 +6,20 @@ from members.models import User
 
 class Order(models.Model):
     DELIVERY_CHOICES = [
-        ('quick', 'Quick'),
-        ('normal', 'Normal'),
+        ('quick', '샛별배송'),
+        ('normal', '일반배송'),
     ]
 
     PAYMENT_CHOICES = [
-        ('card', 'CreditCard'),
-        ('mobile', 'Mobile'),
-        ('others', 'Others'),
+        ('card', '카드 결제'),
+        ('mobile', '휴대폰 결제'),
+        ('others', '기타 결제'),
     ]
-
-    created_at = models.DateTimeField(auto_now_add=True)
+    STATUS_CHOICES = [
+        ('yet', '배송 준비 중'),
+        ('on', '배송 중'),
+        ('done', '배송 완료'),
+    ]
     buyer = models.ForeignKey(User, on_delete=models.CASCADE)
     receiver = models.CharField(max_length=30)
     address = models.CharField(max_length=70)
@@ -26,8 +29,11 @@ class Order(models.Model):
     total_price = models.PositiveIntegerField()
 
     ordered = models.BooleanField(default=False)
+    ordered_at = models.DateTimeField(auto_now=True)
     payment = models.CharField(choices=PAYMENT_CHOICES, max_length=20)
     agreed = models.BooleanField(default=False)
+
+    status = models.CharField(choices=STATUS_CHOICES, max_length=10, default='yet')
 
 
 class Category(models.Model):
@@ -41,6 +47,7 @@ class Subcategory(models.Model):
 
 class Product(models.Model):
     name = models.CharField(max_length=50)
+    summary = models.CharField(max_length=50)
     subcategory = models.OneToOneField(Subcategory, on_delete=models.SET_NULL, null=True)
     price = models.PositiveIntegerField()
     unit = models.CharField(max_length=10)
@@ -57,7 +64,7 @@ class Product(models.Model):
 class Image(models.Model):
     name = models.CharField(max_length=100)
     product = models.ForeignKey(Product, related_name='images', on_delete=models.CASCADE)
-    image = models.ImageField(upload_to=MEDIA_URL)
+    image = models.ImageField(upload_to='media')
 
 
 class OrderProduct(models.Model):

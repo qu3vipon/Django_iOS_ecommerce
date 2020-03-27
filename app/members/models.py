@@ -5,6 +5,7 @@ from django.db import models
 class Mobile(models.Model):
     number = models.PositiveIntegerField()
     token = models.PositiveSmallIntegerField()
+    auth_time = models.DateTimeField(auto_now=True)
 
 
 class Address(models.Model):
