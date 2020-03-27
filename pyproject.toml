@@ -15,11 +15,15 @@ supervisor = "^4.1.0"
 djangorestframework = "^3.11.0"
 django-cors-headers = "^3.2.1"
 pillow = "^7.0.0"
+sentry-sdk = "^0.14.3"
+drf-yasg = "^1.17.1"
+coolsms_python_sdk = "^2.0.3"
 
 [tool.poetry.dev-dependencies]
 django-debug-toolbar = "^2.2"
 django-extensions = "^2.2.8"
 httpie = "^2.0.0"
+requests = "^2.23.0"
 
 [build-system]
 requires = ["poetry>=0.12"]
