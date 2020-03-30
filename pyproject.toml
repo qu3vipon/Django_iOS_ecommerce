@@ -18,6 +18,8 @@ pillow = "^7.0.0"
 sentry-sdk = "^0.14.3"
 drf-yasg = "^1.17.1"
 coolsms_python_sdk = "^2.0.3"
+django-phonenumber-field = "^4.0.0"
+phonenumbers = "^8.12.0"
 
 [tool.poetry.dev-dependencies]
 django-debug-toolbar = "^2.2"
