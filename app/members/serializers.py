@@ -34,7 +34,7 @@ class UserCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['username', 'email', 'password', 'mobile', 'address', 'birth_date', 'gender']
+        fields = ['username', 'email', 'name', 'password', 'mobile', 'address', 'birth_date', 'gender']
 
     def create(self, validated_data):
         validated_data['mobile'], created = Mobile.objects.get_or_create(number=validated_data['mobile'])

@@ -31,7 +31,7 @@ class User(AbstractUser):
     name = models.CharField(max_length=30)
     agreed = models.BooleanField(default=False)
     mobile = models.OneToOneField(Mobile, on_delete=models.CASCADE, unique=True)
-    address = models.OneToOneField(Address, on_delete=models.CASCADE)
+    address = models.ForeignKey(Address, on_delete=models.CASCADE)
     birth_date = models.DateField(null=True, blank=True)
     gender = models.CharField(max_length=10, choices=GENDER_CHOICES, default='n')
 
