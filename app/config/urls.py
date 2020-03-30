@@ -34,7 +34,6 @@ urlpatterns = [
     path('doc/', schema_view.with_ui('redoc', cache_timeout=0)),
 
     path('admin/', admin.site.urls),
-    path('api-auth/', include('rest_framework.urls')),
     path('accounts/', include('members.urls'), name='accounts'),
     path('api-token-auth/', ObtainTokenView.as_view(), name='token'),
 ]

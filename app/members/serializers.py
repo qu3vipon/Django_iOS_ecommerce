@@ -10,7 +10,15 @@ from .models import User, Mobile, Address
 class MobileSerializer(serializers.ModelSerializer):
     class Meta:
         model = Mobile
-        fields = ['number']
+        fields = ['number', 'authenticated']
+
+
+class MobileTokenCreateSerializer(serializers.ModelSerializer):
+    number = serializers.CharField()
+
+    class Meta:
+        model = Mobile
+        fields = ['number', 'token']
 
 
 class AddressSerializer(serializers.ModelSerializer):
@@ -25,7 +33,7 @@ class UserListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = '__all__'
+        fields = ['id', 'email', 'username', 'mobile', 'address', 'birth_date', 'gender', 'last_login']
 
 
 class UserCreateSerializer(serializers.ModelSerializer):
@@ -37,9 +45,10 @@ class UserCreateSerializer(serializers.ModelSerializer):
         fields = ['username', 'email', 'name', 'password', 'mobile', 'address', 'birth_date', 'gender']
 
     def create(self, validated_data):
-        validated_data['mobile'], created = Mobile.objects.get_or_create(number=validated_data['mobile'])
-        if not created:
-            raise ValueError('휴대폰 번호 중복')
+        mobile = Mobile.objects.get(number=validated_data['mobile'])
+        if mobile.authenticated:
+            validated_data['mobile'] = mobile
+
         validated_data['address'], created = Address.objects.get_or_create(
             address_name=validated_data['address']['address_name'],
             road_address=validated_data['address']['road_address'],
