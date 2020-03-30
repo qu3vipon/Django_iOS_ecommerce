@@ -1,7 +1,9 @@
-from rest_framework import generics
+from django.core.exceptions import ObjectDoesNotExist
+from rest_framework import generics, status
 from rest_framework.authtoken.models import Token
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.response import Response
+from rest_framework.views import APIView
 
 from .models import User
 from .serializers import UserListSerializer, UserCreateSerializer
@@ -28,3 +30,13 @@ class ObtainTokenView(ObtainAuthToken):
             'token': token.key,
             'user': UserListSerializer(user).data,
         })
+
+
+# 각종 필드 값을 중복검사하는 View
+class CheckDuplicatesView(APIView):
+    def post(self, request, *args, **kwargs):
+        try:
+            User.objects.get(username=self.request.data['username'])
+        except ObjectDoesNotExist:
+            return Response('중복값 없음', status=status.HTTP_200_OK)
+
