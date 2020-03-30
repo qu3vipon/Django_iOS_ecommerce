@@ -74,9 +74,10 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'corsheaders',
-    'storages',
+    'phonenumber_field',
     'rest_framework',
     'rest_framework.authtoken',
+    'storages',
 
     'members.apps.MembersConfig',
     'kurly.apps.KurlyConfig',
@@ -96,7 +97,7 @@ MIDDLEWARE = [
 # DRF Settings
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.BasicAuthentication',
         'rest_framework.authentication.TokenAuthentication',
     ],
     'DEFAULT_PERMISSION_CLASSES': [

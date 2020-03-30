@@ -1,5 +1,16 @@
 [[package]]
 category = "main"
+description = "Internationalization utilities"
+name = "babel"
+optional = false
+python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
+version = "2.8.0"
+
+[package.dependencies]
+pytz = ">=2015.7"
+
+[[package]]
+category = "main"
 description = "The AWS SDK for Python"
 name = "boto3"
 optional = false
@@ -135,6 +146,22 @@ version = "2.2.8"
 
 [package.dependencies]
 six = ">=1.2"
+
+[[package]]
+category = "main"
+description = "An international phone number field for django models."
+name = "django-phonenumber-field"
+optional = false
+python-versions = ">=3.5"
+version = "4.0.0"
+
+[package.dependencies]
+Django = ">=1.11.3"
+babel = "*"
+
+[package.extras]
+phonenumbers = ["phonenumbers (>=7.0.2)"]
+phonenumberslite = ["phonenumberslite (>=7.0.2)"]
 
 [[package]]
 category = "main"
@@ -294,6 +321,14 @@ version = "20.3"
 [package.dependencies]
 pyparsing = ">=2.0.2"
 six = "*"
+
+[[package]]
+category = "main"
+description = "Python version of Google's common library for parsing, formatting, storing and validating international phone numbers."
+name = "phonenumbers"
+optional = false
+python-versions = "*"
+version = "8.12.0"
 
 [[package]]
 category = "main"
@@ -476,10 +511,14 @@ secure = ["pyOpenSSL (>=0.14)", "cryptography (>=1.3.4)", "idna (>=2.0.0)", "cer
 socks = ["PySocks (>=1.5.6,<1.5.7 || >1.5.7,<2.0)"]
 
 [metadata]
-content-hash = "e39f4a6e536cb59f9d9dbebff58001786e1ca95de80b8ab6a96bdafbcb157ba0"
+content-hash = "f2d9602f3b8d6a3fb41e96740b53f4da04c20ddb3a1488d5e14a41a58284c07d"
 python-versions = "^3.7"
 
 [metadata.files]
+babel = [
+    {file = "Babel-2.8.0-py2.py3-none-any.whl", hash = "sha256:d670ea0b10f8b723672d3a6abeb87b565b244da220d76b4dba1b66269ec152d4"},
+    {file = "Babel-2.8.0.tar.gz", hash = "sha256:1aac2ae2d0d8ea368fa90906567f5c08463d98ade155c0c4bfedd6a0f7160e38"},
+]
 boto3 = [
     {file = "boto3-1.12.26-py2.py3-none-any.whl", hash = "sha256:934057d57331d1f9c969f186533e87f460e97d2127ca2fde0505a234ec9ad286"},
     {file = "boto3-1.12.26.tar.gz", hash = "sha256:c998a5a8c6ec6ebb4f3fc6884faa0250e511dbc27fee555e422fe6023e0e73ac"},
@@ -526,6 +565,10 @@ django-debug-toolbar = [
 django-extensions = [
     {file = "django-extensions-2.2.8.tar.gz", hash = "sha256:2699cc1d6fb4bd393c0b5832fea4bc685f2ace5800b3c9ff222b2080f161ac04"},
     {file = "django_extensions-2.2.8-py2.py3-none-any.whl", hash = "sha256:1a03c4e8bade575f8c2be6c76456f8a2be3f9b02ab9f47d3535afa9562dc0493"},
+]
+django-phonenumber-field = [
+    {file = "django-phonenumber-field-4.0.0.tar.gz", hash = "sha256:d4580cc3352f4433962825f9927e6669852c1b40ec484fcb5a74064dabc1201a"},
+    {file = "django_phonenumber_field-4.0.0-py3-none-any.whl", hash = "sha256:2ca3bb0ada0ebc164bd903a981a34f1202a4294006e520b0da961bd7ce9f20a4"},
 ]
 django-storages = [
     {file = "django-storages-1.9.1.tar.gz", hash = "sha256:a59e9923cbce7068792f75344ed7727021ee4ac20f227cf17297d0d03d141e91"},
@@ -608,6 +651,10 @@ markupsafe = [
 packaging = [
     {file = "packaging-20.3-py2.py3-none-any.whl", hash = "sha256:82f77b9bee21c1bafbf35a84905d604d5d1223801d639cf3ed140bd651c08752"},
     {file = "packaging-20.3.tar.gz", hash = "sha256:3c292b474fda1671ec57d46d739d072bfd495a4f51ad01a055121d81e952b7a3"},
+]
+phonenumbers = [
+    {file = "phonenumbers-8.12.0-py2.py3-none-any.whl", hash = "sha256:43b42af336bee2d8fdebe6c6c8ade2deacce8cf776dc12aa34dcb8ccc96dd70d"},
+    {file = "phonenumbers-8.12.0.tar.gz", hash = "sha256:161a99966dcfc29d52dfc36e5613ec0a04362409d5ccd384185b1506b462d156"},
 ]
 pillow = [
     {file = "Pillow-7.0.0-cp35-cp35m-macosx_10_6_intel.whl", hash = "sha256:5f3546ceb08089cedb9e8ff7e3f6a7042bb5b37c2a95d392fb027c3e53a2da00"},
