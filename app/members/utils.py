@@ -1,4 +1,3 @@
-from rest_framework.response import Response
 from sdk.api.message import Message
 from sdk.exceptions import CoolsmsException
 
@@ -28,4 +27,3 @@ def coolsms(mobile):
     except CoolsmsException as e:
         print("Error Code: %s" % e.code)
         print("Error Message: %s" % e.msg)
-
