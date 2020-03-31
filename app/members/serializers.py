@@ -7,6 +7,7 @@ from rest_framework.authtoken.models import Token
 from .models import User, Mobile, Address
 
 
+# Mobile
 class MobileSerializer(serializers.ModelSerializer):
     class Meta:
         model = Mobile
@@ -21,12 +22,14 @@ class MobileTokenCreateSerializer(serializers.ModelSerializer):
         fields = ['number', 'token']
 
 
+# Address
 class AddressSerializer(serializers.ModelSerializer):
     class Meta:
         model = Address
         fields = ['address_name', 'road_address', 'zip_code']
 
 
+# User
 class UserListSerializer(serializers.ModelSerializer):
     mobile = MobileSerializer()
     address = AddressSerializer()

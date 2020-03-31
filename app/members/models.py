@@ -7,7 +7,7 @@ from phonenumber_field.modelfields import PhoneNumberField
 class Mobile(models.Model):
     number = PhoneNumberField()
     token = models.PositiveIntegerField(null=True, blank=True)
-    authenticated = models.BooleanField(default=False)
+    is_authenticated = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -31,7 +31,7 @@ class User(AbstractUser):
     ]
     email = models.EmailField()
     name = models.CharField(max_length=30)
-    agreed = models.BooleanField(default=False)
+    is_agreed = models.BooleanField(default=False)
     mobile = models.OneToOneField(Mobile, on_delete=models.CASCADE, unique=True)
     address = models.ForeignKey(Address, on_delete=models.CASCADE)
     birth_date = models.DateField(null=True, blank=True)

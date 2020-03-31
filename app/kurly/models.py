@@ -27,11 +27,11 @@ class Order(models.Model):
     requirements = models.TextField(max_length=100, blank=True)
     total_price = models.PositiveIntegerField()
 
-    ordered = models.BooleanField(default=False)
+    is_ordered = models.BooleanField(default=False)
     ordered_at = models.DateTimeField()
     payment = models.CharField(choices=PAYMENT_CHOICES, max_length=20)
     payed_at = models.DateTimeField()
-    agreed = models.BooleanField(default=False)
+    is_agreed = models.BooleanField(default=False)
 
     status = models.CharField(choices=STATUS_CHOICES, max_length=10, default='yet')
 
