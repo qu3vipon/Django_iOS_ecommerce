@@ -13,6 +13,7 @@ def coolsms(mobile):
     params['to'] = str(mobile.number)
     params['from'] = SECRETS['COOLSMS']
     params['text'] = f'마켓브로콜리 SMS 인증번호: {mobile.token}'
+
     cool = Message(api_key, api_secret)
 
     try:
