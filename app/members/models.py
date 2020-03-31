@@ -6,7 +6,7 @@ from phonenumber_field.modelfields import PhoneNumberField
 
 class Mobile(models.Model):
     number = PhoneNumberField()
-    token = models.PositiveSmallIntegerField(null=True, blank=True)
+    token = models.PositiveIntegerField(null=True, blank=True)
     authenticated = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
 
