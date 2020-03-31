@@ -61,7 +61,7 @@ class MobileTokenCreateView(APIView):
         return Response('전화번호를 올바르게 입력해주세요.', status=status.HTTP_400_BAD_REQUEST)
 
     def new_token_coolsms(self, mobile):
-        mobile.token = ''.join(random.choices(string.digits, k=4))
+        mobile.token = ''.join(random.choices(string.digits, k=6))
         mobile.save()
         coolsms(mobile)
 
