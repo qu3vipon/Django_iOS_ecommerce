@@ -11,7 +11,7 @@ from .models import User, Mobile, Address
 class MobileSerializer(serializers.ModelSerializer):
     class Meta:
         model = Mobile
-        fields = ['number', 'authenticated']
+        fields = ['number', 'is_authenticated']
 
 
 class MobileTokenCreateSerializer(serializers.ModelSerializer):
@@ -30,7 +30,7 @@ class AddressSerializer(serializers.ModelSerializer):
 
 
 # User
-class UserListSerializer(serializers.ModelSerializer):
+class UserSerializer(serializers.ModelSerializer):
     mobile = MobileSerializer()
     address = AddressSerializer()
 
@@ -49,7 +49,7 @@ class UserCreateSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         mobile = Mobile.objects.get(number=validated_data['mobile'])
-        if mobile.authenticated:
+        if mobile.is_authenticated:
             validated_data['mobile'] = mobile
 
         validated_data['address'], created = Address.objects.get_or_create(
@@ -59,7 +59,7 @@ class UserCreateSerializer(serializers.ModelSerializer):
         return User.objects.create_user(**validated_data)
 
     def to_representation(self, instance):
-        return UserListSerializer(instance).data
+        return UserSerializer(instance).data
 
 
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)
