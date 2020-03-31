@@ -45,13 +45,14 @@ class CheckDuplicatesView(APIView):
             return Response('중복값 없음')
 
 
+# 휴대폰 인증 관련
 class MobileTokenCreateView(APIView):
     def post(self, request, *args, **kwargs):
         serializer = MobileTokenCreateSerializer(data=self.request.data)
         if serializer.is_valid():
             mobile, created = Mobile.objects.get_or_create(number=serializer.validated_data['number'])
             if not created:
-                if mobile.authenticated:
+                if mobile.is_authenticated:
                     raise ValueError('이미 가입된 전화번호입니다.')
                 else:
                     self.new_token_coolsms(mobile)
@@ -73,8 +74,8 @@ class MobileTokenAuthenticateView(APIView):
             try:
                 mobile = Mobile.objects.get(number=serializer.validated_data['number'],
                                             token=serializer.validated_data['token'])
-                mobile.authenticated = True
-                mobile.save()
-            except ValueError:
+            except ObjectDoesNotExist:
                 return Response('인증 실패', status=status.HTTP_401_UNAUTHORIZED)
+            mobile.is_authenticated = True
+            mobile.save()
             return Response('휴대폰 인증 완료')
