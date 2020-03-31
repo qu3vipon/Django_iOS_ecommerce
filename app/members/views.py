@@ -53,12 +53,17 @@ class MobileTokenCreateView(APIView):
             if not created:
                 if mobile.authenticated:
                     raise ValueError('이미 가입된 전화번호입니다.')
-                raise ValueError('인증되지 않은 동일한 번호가 존재합니다.')
-            mobile.token = ''.join(random.choices(string.digits, k=4))
-            mobile.save()
-            coolsms(mobile)
+                else:
+                    self.new_token_coolsms(mobile)
+                    return Response('토큰 재전송 완료')
+            self.new_token_coolsms(mobile)
             return Response('토큰 전송 완료')
         return Response('전화번호를 올바르게 입력해주세요.', status=status.HTTP_400_BAD_REQUEST)
+
+    def new_token_coolsms(self, mobile):
+        mobile.token = ''.join(random.choices(string.digits, k=6))
+        mobile.save()
+        coolsms(mobile)
 
 
 class MobileTokenAuthenticateView(APIView):
@@ -66,7 +71,8 @@ class MobileTokenAuthenticateView(APIView):
         serializer = MobileTokenCreateSerializer(data=self.request.data)
         if serializer.is_valid():
             try:
-                mobile = Mobile.objects.get(number=serializer.validated_data['number'], token=serializer.validated_data['token'])
+                mobile = Mobile.objects.get(number=serializer.validated_data['number'],
+                                            token=serializer.validated_data['token'])
                 mobile.authenticated = True
                 mobile.save()
             except ValueError:
