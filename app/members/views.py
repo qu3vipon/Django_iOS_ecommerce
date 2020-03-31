@@ -9,18 +9,18 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from .models import User, Mobile
-from .serializers import UserListSerializer, UserCreateSerializer, MobileTokenCreateSerializer
+from .serializers import UserSerializer, UserCreateSerializer, MobileTokenCreateSerializer
 from .utils import coolsms
 
 
-class UserListCreateView(generics.ListCreateAPIView):
+class UserRetrieveView(generics.RetrieveAPIView):
     queryset = User.objects.all()
+    serializer_class = UserSerializer
 
-    def get_serializer_class(self):
-        if self.request.method == 'GET':
-            return UserListSerializer
-        elif self.request.method == 'POST':
-            return UserCreateSerializer
+
+class UserCreateView(generics.CreateAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserCreateSerializer
 
 
 class ObtainTokenView(ObtainAuthToken):
@@ -32,7 +32,7 @@ class ObtainTokenView(ObtainAuthToken):
         token = Token.objects.get(user=user)
         return Response({
             'token': token.key,
-            'user': UserListSerializer(user).data,
+            'user': UserSerializer(user).data,
         })
 
 
