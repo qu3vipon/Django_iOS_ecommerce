@@ -104,8 +104,14 @@ REST_FRAMEWORK = {
     ],
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.AllowAny',
-    ]
+    ],
+    'EXCEPTION_HANDLER': 'utils.drf.excepts.rest_exception_handler'
 }
+
+
+# django-phonenumber-field
+PHONENUMBER_DEFAULT_REGION = 'KR'
+PHONENUMBER_DB_FORMAT = 'NATIONAL'
 
 # drf-yasg
 BASIC_DESCRIPTION = '''
@@ -139,8 +145,8 @@ SWAGGER_SETTINGS = {
 }
 
 ROOT_URLCONF = 'config.urls'
-LOGIN_REDIRECT_URL = '/accounts/list'
-LOGOUT_REDIRECT_URL = '/accounts/list'
+# LOGIN_REDIRECT_URL = '/accounts/list'
+# # LOGOUT_REDIRECT_URL = '/accounts/list'
 
 TEMPLATES = [
     {

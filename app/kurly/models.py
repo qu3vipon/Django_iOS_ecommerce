@@ -39,27 +39,37 @@ class Order(models.Model):
 class Category(models.Model):
     name = models.CharField(max_length=30)
 
+    def __str__(self):
+        return self.name
+
 
 class Subcategory(models.Model):
     category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, related_name='subcategories')
     name = models.CharField(max_length=30)
 
+    def __str__(self):
+        return self.name
+
 
 class Product(models.Model):
     name = models.CharField(max_length=50)
-    summary = models.CharField(max_length=50)
+    summary = models.CharField(max_length=70)
     subcategory = models.ForeignKey(Subcategory, on_delete=models.CASCADE, related_name='products')
 
     price = models.PositiveIntegerField()
-    unit = models.CharField(max_length=10)
-    amount = models.CharField(max_length=30)
-    package = models.CharField(max_length=30)
-    discount_rate = models.DecimalField(max_digits=3, decimal_places=2)
-    description = models.TextField(max_length=255)
+    unit = models.CharField(max_length=10, blank=True)
+    amount = models.CharField(max_length=30, blank=True)
+    package = models.CharField(max_length=30, blank=True)
+    made_in = models.CharField(max_length=30, blank=True)
+    discount_rate = models.DecimalField(max_digits=3, decimal_places=2, blank=True)
+    description = models.TextField(max_length=255, blank=True)
 
     sales = models.PositiveIntegerField(default=0)
     stock = models.PositiveSmallIntegerField(default=99)
     created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.name
 
 
 class Image(models.Model):
@@ -67,15 +77,24 @@ class Image(models.Model):
     product = models.ForeignKey(Product, related_name='images', on_delete=models.CASCADE)
     image = models.ImageField(upload_to='')
 
+    def __str__(self):
+        return self.name
+
 
 class Option(models.Model):
     product = models.ForeignKey(Product, related_name='options', on_delete=models.CASCADE)
     name = models.CharField(max_length=50)
     price = models.PositiveIntegerField()
 
+    def __str__(self):
+        return self.name
+
 
 class OrderProduct(models.Model):
     order = models.ForeignKey(Order, related_name='orderproducts', on_delete=models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='orderproducts')
-    option = models.ForeignKey(Option, blank=True, null=True, related_name='orderproducts', on_delete=models.CASCADE)
+    option = models.ForeignKey(Option, null=True, related_name='orderproducts', on_delete=models.CASCADE)
     quantity = models.PositiveSmallIntegerField(default=1)
+
+    def __str__(self):
+        return self.product, self.option, self.quantity

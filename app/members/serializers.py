@@ -1,25 +1,88 @@
+import random
+import string
+
 from django.conf import settings
+from django.core.exceptions import ObjectDoesNotExist
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from phonenumber_field.serializerfields import PhoneNumberField
 from rest_framework import serializers
 from rest_framework.authtoken.models import Token
 
+from utils.drf.coolsms import coolsms
+from utils.drf.excepts import InvalidNumberException, TakenNumberException, InvalidTokenException, \
+    TakenUsernameException, ResendSMSException, UnauthorizedMobile
+from utils.drf.serializers import ModelSerializer
 from .models import User, Mobile, Address
 
 
 # Mobile
-class MobileSerializer(serializers.ModelSerializer):
+class MobileSerializer(ModelSerializer):
     class Meta:
         model = Mobile
         fields = ['number', 'is_authenticated']
 
 
 class MobileTokenCreateSerializer(serializers.ModelSerializer):
-    number = serializers.CharField()
-
     class Meta:
         model = Mobile
         fields = ['number', 'token']
+        read_only_fields = ['token']
+
+    def validate_number(self, value):
+        try:
+            mobile = Mobile.objects.get(number=value)
+        except ObjectDoesNotExist:
+            return value
+
+        if mobile.is_authenticated:
+            raise TakenNumberException
+        else:
+            self.sms_new_token(mobile)
+            raise ResendSMSException
+
+    def create(self, validated_data):
+        mobile = Mobile.objects.create(number=validated_data['number'])
+        self.sms_new_token(mobile)
+        return mobile
+
+    @staticmethod
+    def sms_new_token(mobile):
+        mobile.token = ''.join(random.choices(string.digits, k=6))
+        mobile.save()
+        coolsms(mobile)
+
+
+class MobileTokenAuthenticateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Mobile
+        fields = ['number', 'token']
+
+    def validate(self, attrs):
+        try:
+            mobile = Mobile.objects.get(number=attrs['number'])
+        except ObjectDoesNotExist:
+            raise InvalidNumberException
+
+        if mobile.token == attrs['token']:
+            mobile.is_authenticated = True
+            mobile.save()
+        else:
+            raise InvalidTokenException
+        return attrs
+
+
+class CheckDuplicatesSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['username']
+
+    def validate_username(self, value):
+        try:
+            User.objects.get(username=value)
+            raise TakenUsernameException
+        except ObjectDoesNotExist:
+            return value
 
 
 # Address
@@ -40,19 +103,26 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class UserCreateSerializer(serializers.ModelSerializer):
-    mobile = serializers.CharField()
+    mobile = PhoneNumberField()
     address = serializers.DictField(child=serializers.CharField())
 
     class Meta:
         model = User
         fields = ['username', 'email', 'name', 'password', 'mobile', 'address', 'birth_date', 'gender']
 
-    def create(self, validated_data):
-        mobile = Mobile.objects.get(number=validated_data['mobile'])
-        if mobile.is_authenticated:
-            validated_data['mobile'] = mobile
+    def validate_mobile(self, value):
+        try:
+            mobile = Mobile.objects.get(number=value)
+        except ObjectDoesNotExist:
+            raise InvalidNumberException
 
-        validated_data['address'], created = Address.objects.get_or_create(
+        if mobile.is_authenticated:
+            return mobile
+        else:
+            raise UnauthorizedMobile
+
+    def create(self, validated_data):
+        validated_data['address'], _ = Address.objects.get_or_create(
             address_name=validated_data['address']['address_name'],
             road_address=validated_data['address']['road_address'],
             zip_code=validated_data['address']['zip_code'])
