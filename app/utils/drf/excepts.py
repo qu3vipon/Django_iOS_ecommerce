@@ -1,0 +1,51 @@
+from rest_framework import status
+from rest_framework.exceptions import APIException
+from rest_framework.views import exception_handler
+
+
+def rest_exception_handler(exc, context):
+    response = exception_handler(exc, context)
+    if response:
+        response.data['status'] = response.status_code
+        response.data['code'] = getattr(exc, 'code', getattr(exc, 'default_code', None)) \
+            # or response.data['detail'].code
+    return response
+
+
+# Mobile
+class TakenNumberException(APIException):
+    status_code = status.HTTP_400_BAD_REQUEST
+    default_detail = '이미 가입된 번호입니다.'
+    default_code = 'TakenNumber'
+
+
+class InvalidNumberException(APIException):
+    status_code = status.HTTP_400_BAD_REQUEST
+    default_detail = '해당번호로 생성된 모바일 객체가 없습니다.'
+    default_code = 'InvalidNumber'
+
+
+class ResendSMSException(APIException):
+    status_code = status.HTTP_200_OK
+    default_detail = '인증번호 재전송'
+    default_code = 'ResendSMS'
+
+
+class UnauthorizedMobile(APIException):
+    status_code = status.HTTP_400_BAD_REQUEST
+    default_detail = '휴대폰 인증 필요'
+    default_code = 'UnauthorizedMobileNumber'
+
+
+# Auth Token
+class InvalidTokenException(APIException):
+    status_code = status.HTTP_400_BAD_REQUEST
+    default_detail = '토큰값이 유효하지 않습니다.'
+    default_code = 'InvalidToken'
+
+
+# User
+class TakenUsernameException(APIException):
+    status_code = status.HTTP_400_BAD_REQUEST
+    default_detail = 'username이 이미 존재합니다.'
+    default_code = 'TakenUsername'

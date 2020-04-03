@@ -1,3 +1,50 @@
 from django.contrib import admin
 
-# Register your models here.
+from .models import Category, Subcategory, Image, Order, OrderProduct, Option, Product
+
+
+class SubcategoryInline(admin.TabularInline):
+    model = Subcategory
+
+
+class ProductInline(admin.TabularInline):
+    model = Product
+
+
+@admin.register(Category)
+class CategoryAdmin(admin.ModelAdmin):
+    inlines = [
+        SubcategoryInline
+    ]
+
+
+@admin.register(Subcategory)
+class SubcategoryAdmin(admin.ModelAdmin):
+    inlines = [
+        ProductInline
+    ]
+
+
+@admin.register(Image)
+class ImageAdmin(admin.ModelAdmin):
+    pass
+
+
+@admin.register(Order)
+class OrderAdmin(admin.ModelAdmin):
+    pass
+
+
+@admin.register(OrderProduct)
+class OrderProductAdmin(admin.ModelAdmin):
+    pass
+
+
+@admin.register(Option)
+class OptionAdmin(admin.ModelAdmin):
+    pass
+
+
+@admin.register(Product)
+class ProductAdmin(admin.ModelAdmin):
+    pass

@@ -1,21 +1,17 @@
-import random
-import string
-
-from django.core.exceptions import ObjectDoesNotExist
-from rest_framework import generics, status
+from rest_framework import generics, permissions
 from rest_framework.authtoken.models import Token
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.response import Response
-from rest_framework.views import APIView
 
 from .models import User, Mobile
-from .serializers import UserSerializer, UserCreateSerializer, MobileTokenCreateSerializer
-from .utils import coolsms
+from .serializers import UserSerializer, UserCreateSerializer, MobileTokenCreateSerializer, \
+    MobileTokenAuthenticateSerializer, MobileSerializer, CheckDuplicatesSerializer
 
 
 class UserRetrieveView(generics.RetrieveAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
+    permission_classes = [permissions.IsAuthenticated]
 
 
 class UserCreateView(generics.CreateAPIView):
@@ -23,7 +19,9 @@ class UserCreateView(generics.CreateAPIView):
     serializer_class = UserCreateSerializer
 
 
-class ObtainTokenView(ObtainAuthToken):
+class AuthTokenView(ObtainAuthToken):
+    permission_classes = [permissions.IsAuthenticated]
+
     def post(self, request, *args, **kwargs):
         serializer = self.serializer_class(data=request.data,
                                            context={'request': request})
@@ -37,45 +35,31 @@ class ObtainTokenView(ObtainAuthToken):
 
 
 # 각종 필드 값을 중복검사하는 View
-class CheckDuplicatesView(APIView):
-    def post(self, request, *args, **kwargs):
-        try:
-            User.objects.get(username=self.request.data['username'])
-        except ObjectDoesNotExist:
-            return Response('중복값 없음')
+class CheckDuplicatesView(generics.GenericAPIView):
+    queryset = User.objects.all()
+    serializer_class = CheckDuplicatesSerializer
+
+    def post(self, request):
+        serializer = CheckDuplicatesSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        return Response({
+            'username': serializer.validated_data['username'],
+        })
 
 
 # 휴대폰 인증 관련
-class MobileTokenCreateView(APIView):
-    def post(self, request, *args, **kwargs):
-        serializer = MobileTokenCreateSerializer(data=self.request.data)
-        if serializer.is_valid():
-            mobile, created = Mobile.objects.get_or_create(number=serializer.validated_data['number'])
-            if not created:
-                if mobile.is_authenticated:
-                    raise ValueError('이미 가입된 전화번호입니다.')
-                else:
-                    self.new_token_coolsms(mobile)
-                    return Response('토큰 재전송 완료')
-            self.new_token_coolsms(mobile)
-            return Response('토큰 전송 완료')
-        return Response('전화번호를 올바르게 입력해주세요.', status=status.HTTP_400_BAD_REQUEST)
-
-    def new_token_coolsms(self, mobile):
-        mobile.token = ''.join(random.choices(string.digits, k=6))
-        mobile.save()
-        coolsms(mobile)
+class MobileTokenCreateView(generics.CreateAPIView):
+    queryset = Mobile.objects.all()
+    serializer_class = MobileTokenCreateSerializer
 
 
-class MobileTokenAuthenticateView(APIView):
-    def post(self, request, *args, **kwargs):
-        serializer = MobileTokenCreateSerializer(data=self.request.data)
-        if serializer.is_valid():
-            try:
-                mobile = Mobile.objects.get(number=serializer.validated_data['number'],
-                                            token=serializer.validated_data['token'])
-            except ObjectDoesNotExist:
-                return Response('인증 실패', status=status.HTTP_401_UNAUTHORIZED)
-            mobile.is_authenticated = True
-            mobile.save()
-            return Response('휴대폰 인증 완료')
+class MobileTokenAuthenticateView(generics.GenericAPIView):
+    queryset = Mobile.objects.all()
+    serializer_class = MobileTokenAuthenticateSerializer
+
+    def post(self, request):
+        serializer = self.serializer_class(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        mobile = Mobile.objects.get(number=serializer.validated_data['number'],
+                                    token=serializer.validated_data['token'])
+        return Response(MobileSerializer(mobile).data)

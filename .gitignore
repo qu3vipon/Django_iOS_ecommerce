@@ -1,16 +1,19 @@
 # Created by https://www.gitignore.io/api/linux,macos,django,python,windows,pycharm+all
 # Edit at https://www.gitignore.io/?templates=linux,macos,django,python,windows,pycharm+all
 
-coolsms.py
+#### Management Files ###
+app/.management
+create_categories.py
+create_products.py
 
 ### Secrets ###
 .media
-db_reset.py
+app/.management/db_reset.py
 *.pem
 */crawler.py
 
 ### Deploy ###
-deploy.py
+app/.management/deploy.py
 Dockerfile
 .dockerignore
 .config

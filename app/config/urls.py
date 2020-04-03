@@ -19,7 +19,7 @@ from drf_yasg import openapi
 from drf_yasg.views import get_schema_view
 
 from config import settings
-from members.views import ObtainTokenView
+from members.views import AuthTokenView
 
 schema_view = get_schema_view(
     openapi.Info(
@@ -35,7 +35,7 @@ urlpatterns = [
 
     path('admin/', admin.site.urls),
     path('accounts/', include('members.urls'), name='accounts'),
-    path('api-token-auth/', ObtainTokenView.as_view(), name='token'),
+    path('auth-token/', AuthTokenView.as_view(), name='token'),
 ]
 
 if settings.DEBUG:

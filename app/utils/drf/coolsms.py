@@ -10,7 +10,7 @@ def coolsms(mobile):
 
     params = dict()
     params['type'] = 'sms'
-    params['to'] = str(mobile.number)
+    params['to'] = f'0{mobile.number.national_number}'
     params['from'] = SECRETS['COOLSMS']
     params['text'] = f'마켓브로콜리 SMS 인증번호: {mobile.token}'
 
