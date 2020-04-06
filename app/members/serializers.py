@@ -77,12 +77,12 @@ class CheckDuplicatesSerializer(serializers.ModelSerializer):
         model = User
         fields = ['username']
 
-    def validate_username(self, value):
+    def to_internal_value(self, data):
         try:
-            User.objects.get(username=value)
+            User.objects.get(username=data['username'])
             raise TakenUsernameException
         except ObjectDoesNotExist:
-            return value
+            return data
 
 
 # Address

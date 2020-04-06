@@ -1,8 +1,10 @@
+from django.db import IntegrityError
 from rest_framework import generics
 from rest_framework.authtoken.models import Token
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.response import Response
 
+from utils.drf.excepts import TakenNumberException
 from .models import User, Mobile
 from .permissions import MyUserInfoOnly
 from .serializers import UserSerializer, UserCreateSerializer, MobileTokenCreateSerializer, \
@@ -18,6 +20,13 @@ class UserRetrieveView(generics.RetrieveAPIView):
 class UserCreateView(generics.CreateAPIView):
     queryset = User.objects.all()
     serializer_class = UserCreateSerializer
+
+    def create(self, request, *args, **kwargs):
+        try:
+            return super().create(request)
+        # 휴대폰 번호가 중복일 경우, 데이터베이스 무결성 오류 발생 (Mobile unique=True) -> TakenNumberException 처리
+        except IntegrityError:
+            raise TakenNumberException
 
 
 class AuthTokenView(ObtainAuthToken):
@@ -41,9 +50,7 @@ class CheckDuplicatesView(generics.GenericAPIView):
     def post(self, request):
         serializer = CheckDuplicatesSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        return Response({
-            'username': serializer.validated_data['username'],
-        })
+        return Response(True)
 
 
 # 휴대폰 인증 관련
