@@ -42,3 +42,15 @@ class CartListSerializer(serializers.ModelSerializer):
             rep.pop('option')
 
         return rep
+
+
+# class OrderSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = Order
+#         fields = ['receiver', 'address', 'delivery', 'mobile', 'requirements', 'total_price', 'payment', 'ordered_at']
+#
+
+class HomeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Product
+        fields = ['name', 'price', 'discount_rate', 'summary']
