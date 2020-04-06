@@ -36,6 +36,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('accounts/', include('members.urls'), name='accounts'),
     path('auth-token/', AuthTokenView.as_view(), name='token'),
+    path('kurly/', include('kurly.urls')),
 ]
 
 if settings.DEBUG:

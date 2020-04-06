@@ -27,10 +27,8 @@ class Order(models.Model):
     requirements = models.TextField(max_length=100, blank=True)
     total_price = models.PositiveIntegerField()
 
-    is_ordered = models.BooleanField(default=False)
-    ordered_at = models.DateTimeField()
+    ordered_at = models.DateTimeField(auto_now_add=True)
     payment = models.CharField(choices=PAYMENT_CHOICES, max_length=20)
-    payed_at = models.DateTimeField()
     is_agreed = models.BooleanField(default=False)
 
     status = models.CharField(choices=STATUS_CHOICES, max_length=10, default='yet')
@@ -62,7 +60,7 @@ class Product(models.Model):
     package = models.CharField(max_length=30, blank=True)
     made_in = models.CharField(max_length=30, blank=True)
     discount_rate = models.DecimalField(max_digits=3, decimal_places=2, blank=True)
-    description = models.TextField(max_length=255, blank=True)
+    description = models.TextField(blank=True)
 
     sales = models.PositiveIntegerField(default=0)
     stock = models.PositiveSmallIntegerField(default=99)
@@ -91,10 +89,11 @@ class Option(models.Model):
 
 
 class OrderProduct(models.Model):
-    order = models.ForeignKey(Order, related_name='orderproducts', on_delete=models.CASCADE)
+    user = models.ForeignKey(User, related_name='orderproducts', on_delete=models.CASCADE)
+    order = models.ForeignKey(Order, null=True, related_name='orderproducts', on_delete=models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='orderproducts')
     option = models.ForeignKey(Option, null=True, related_name='orderproducts', on_delete=models.CASCADE)
     quantity = models.PositiveSmallIntegerField(default=1)
 
     def __str__(self):
-        return self.product, self.option, self.quantity
+        return f'{self.product}, {self.option}, {self.quantity}'
