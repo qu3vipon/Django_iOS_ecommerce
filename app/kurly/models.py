@@ -60,7 +60,7 @@ class Product(models.Model):
     package = models.CharField(max_length=30, blank=True)
     made_in = models.CharField(max_length=30, blank=True)
     discount_rate = models.DecimalField(max_digits=3, decimal_places=2, blank=True)
-    description = models.TextField(max_length=255, blank=True)
+    description = models.TextField(blank=True)
 
     sales = models.PositiveIntegerField(default=0)
     stock = models.PositiveSmallIntegerField(default=99)
