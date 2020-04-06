@@ -1,17 +1,18 @@
-from rest_framework import generics, permissions
+from rest_framework import generics
 from rest_framework.authtoken.models import Token
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.response import Response
 
 from .models import User, Mobile
+from .permissions import MyUserInfoOnly
 from .serializers import UserSerializer, UserCreateSerializer, MobileTokenCreateSerializer, \
     MobileTokenAuthenticateSerializer, MobileSerializer, CheckDuplicatesSerializer
 
 
 class UserRetrieveView(generics.RetrieveAPIView):
+    permission_classes = [MyUserInfoOnly]
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    permission_classes = [permissions.IsAuthenticated]
 
 
 class UserCreateView(generics.CreateAPIView):
@@ -20,8 +21,6 @@ class UserCreateView(generics.CreateAPIView):
 
 
 class AuthTokenView(ObtainAuthToken):
-    permission_classes = [permissions.IsAuthenticated]
-
     def post(self, request, *args, **kwargs):
         serializer = self.serializer_class(data=request.data,
                                            context={'request': request})
