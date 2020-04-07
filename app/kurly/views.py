@@ -1,8 +1,8 @@
 from rest_framework import generics
+from rest_framework.response import Response
 
-from .models import OrderProduct, Order, Product, Category
+from .models import OrderProduct, Product, Category
 from .permissions import MyCartOnly
-
 from .serializers import CartSerializer, CartCreateSerializer, HomeSerializer
 
 
@@ -26,7 +26,6 @@ class CartListCreateView(generics.ListCreateAPIView):
     # OrderProduct(order = None) -> 장바구니
     def get_queryset(self):
         return OrderProduct.objects.filter(order=None)
-
 
     def perform_create(self, serializer):
         return serializer.save(user=self.request.user)
@@ -71,6 +70,3 @@ class NewListView(generics.ListAPIView):
 class DiscountListView(generics.ListAPIView):
     queryset = Product.objects.order_by('-discount_rate')[:50]
     serializer_class = HomeSerializer
-
-
-
