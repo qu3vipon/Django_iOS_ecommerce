@@ -51,7 +51,7 @@ class Subcategory(models.Model):
 
 class Product(models.Model):
     name = models.CharField(max_length=50)
-    summary = models.CharField(max_length=70)
+    summary = models.CharField(max_length=70, blank=True)
     subcategory = models.ForeignKey(Subcategory, on_delete=models.CASCADE, related_name='products')
 
     price = models.PositiveIntegerField()
@@ -68,6 +68,11 @@ class Product(models.Model):
 
     def __str__(self):
         return self.name
+
+    class Meta:
+        indexes = [
+            models.Index(fields=['-sales', '-discount_rate', '-created_at', '-stock'])
+        ]
 
 
 class Image(models.Model):
