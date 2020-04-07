@@ -1,23 +1,24 @@
 from rest_framework import generics
-from rest_framework.response import Response
 
 from .models import OrderProduct
 from .permissions import MyCartOnly
-from .serializers import CartListSerializer, CartCreateSerializer
-
-
-# 장바구니 생성
-class CartCreateView(generics.CreateAPIView):
-    queryset = OrderProduct.objects.all()
-    serializer_class = CartCreateSerializer()
+from .serializers import CartSerializer, CartCreateSerializer
 
 
 # 장바구니 목록 출력
-class CartListView(generics.ListAPIView):
+class CartListCreateView(generics.ListCreateAPIView):
     queryset = OrderProduct.objects.all()
-    serializer_class = CartListSerializer
     permission_classes = [MyCartOnly]
+
+    def get_serializer_class(self):
+        if self.request.method == 'GET':
+            return CartSerializer
+        elif self.request.method == 'POST':
+            return CartCreateSerializer
 
     # OrderProduct(order = None) -> 장바구니
     def get_queryset(self):
         return OrderProduct.objects.filter(order=None)
+
+    def perform_create(self, serializer):
+        return serializer.save(user=self.request.user)

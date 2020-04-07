@@ -62,3 +62,22 @@ class TakenUsernameException(APIException):
     status_code = status.HTTP_400_BAD_REQUEST
     default_detail = 'username이 이미 존재합니다.'
     default_code = 'TakenUsername'
+
+
+# Product
+class InvalidProductException(APIException):
+    status_code = status.HTTP_400_BAD_REQUEST
+    default_detail = '해당 상품이 존재하지 않습니다.'
+    default_code = 'InvalidProduct'
+
+
+class InvalidOptionException(APIException):
+    status_code = status.HTTP_400_BAD_REQUEST
+    default_detail = '해당 옵션이 존재하지 않습니다.'
+    default_code = 'InvalidOption'
+
+
+class ProductOptionNotMatchingException(APIException):
+    status_code = status.HTTP_400_BAD_REQUEST
+    default_detail = '상품과 옵션이 매칭되지 않습니다.'
+    default_code = 'ProductOptionNotMatching'

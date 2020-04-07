@@ -76,7 +76,7 @@ class Image(models.Model):
     image = models.ImageField(upload_to='')
 
     def __str__(self):
-        return self.name
+        return f'{self.product} {self.name}'
 
 
 class Option(models.Model):
@@ -92,7 +92,7 @@ class OrderProduct(models.Model):
     user = models.ForeignKey(User, related_name='orderproducts', on_delete=models.CASCADE)
     order = models.ForeignKey(Order, null=True, related_name='orderproducts', on_delete=models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='orderproducts')
-    option = models.ForeignKey(Option, null=True, related_name='orderproducts', on_delete=models.CASCADE)
+    option = models.ForeignKey(Option, null=True, blank=True, related_name='orderproducts', on_delete=models.CASCADE)
     quantity = models.PositiveSmallIntegerField(default=1)
 
     def __str__(self):
