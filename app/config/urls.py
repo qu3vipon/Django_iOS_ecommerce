@@ -19,7 +19,6 @@ from drf_yasg import openapi
 from drf_yasg.views import get_schema_view
 
 from config import settings
-from members.views import AuthTokenView
 
 schema_view = get_schema_view(
     openapi.Info(
@@ -32,7 +31,7 @@ schema_view = get_schema_view(
 
 urlpatterns = [
     path('doc/', schema_view.with_ui('redoc', cache_timeout=0)),
-  
+
     path('admin/', admin.site.urls),
     path('accounts/', include('members.urls')),
     path('kurly/', include('kurly.urls')),

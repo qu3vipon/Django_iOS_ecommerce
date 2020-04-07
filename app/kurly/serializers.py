@@ -37,6 +37,7 @@ class CartSerializer(serializers.ModelSerializer):
             rep.pop('option')
         return rep
 
+
 # 장바구니 추가
 class CartCreateSerializer(serializers.ModelSerializer):
     product = ProductBasicSerializer
@@ -56,7 +57,8 @@ class CartCreateSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         return CartSerializer(instance).data
 
-# 홈 화
+
+# 홈 화면
 class HomeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
