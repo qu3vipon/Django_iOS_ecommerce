@@ -32,11 +32,9 @@ schema_view = get_schema_view(
 
 urlpatterns = [
     path('doc/', schema_view.with_ui('redoc', cache_timeout=0)),
-
+  
     path('admin/', admin.site.urls),
-    path('accounts/', include('members.urls'), name='accounts'),
-    path('auth-token/', AuthTokenView.as_view(), name='token'),
-    path('home/', include('kurly.urls')),
+    path('accounts/', include('members.urls')),
     path('kurly/', include('kurly.urls')),
 
 ]

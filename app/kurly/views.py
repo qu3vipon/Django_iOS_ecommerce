@@ -1,9 +1,9 @@
 from rest_framework import generics
-from rest_framework.response import Response
 
 from .models import OrderProduct, Order, Product, Category
 from .permissions import MyCartOnly
-from .serializers import CartListSerializer, CartCreateSerializer, HomeSerializer
+
+from .serializers import CartSerializer, CartCreateSerializer, HomeSerializer
 
 
 # 장바구니 생성
@@ -13,14 +13,23 @@ class CartCreateView(generics.CreateAPIView):
 
 
 # 장바구니 목록 출력
-class CartListView(generics.ListAPIView):
+class CartListCreateView(generics.ListCreateAPIView):
     queryset = OrderProduct.objects.all()
-    serializer_class = CartListSerializer
     permission_classes = [MyCartOnly]
+
+    def get_serializer_class(self):
+        if self.request.method == 'GET':
+            return CartSerializer
+        elif self.request.method == 'POST':
+            return CartCreateSerializer
 
     # OrderProduct(order = None) -> 장바구니
     def get_queryset(self):
         return OrderProduct.objects.filter(order=None)
+
+
+    def perform_create(self, serializer):
+        return serializer.save(user=self.request.user)
 
 
 # 메인 홈화면
@@ -62,5 +71,6 @@ class NewListView(generics.ListAPIView):
 class DiscountListView(generics.ListAPIView):
     queryset = Product.objects.order_by('-discount_rate')[:50]
     serializer_class = HomeSerializer
+
 
 

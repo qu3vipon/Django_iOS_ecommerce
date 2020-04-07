@@ -27,7 +27,7 @@ class SubcategoryAdmin(admin.ModelAdmin):
 
 @admin.register(Image)
 class ImageAdmin(admin.ModelAdmin):
-    pass
+    search_fields = ['product__name']
 
 
 @admin.register(Order)
@@ -47,4 +47,4 @@ class OptionAdmin(admin.ModelAdmin):
 
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
-    pass
+    search_fields = ['name']

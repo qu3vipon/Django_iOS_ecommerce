@@ -58,31 +58,29 @@ class MobileTokenAuthenticateSerializer(serializers.ModelSerializer):
         model = Mobile
         fields = ['number', 'token']
 
-    def validate(self, attrs):
+    def validate(self, data):
         try:
-            mobile = Mobile.objects.get(number=attrs['number'])
+            mobile = Mobile.objects.get(number=data['number'])
         except ObjectDoesNotExist:
             raise InvalidNumberException
 
-        if mobile.token == attrs['token']:
+        if mobile.token == data['token']:
             mobile.is_authenticated = True
             mobile.save()
         else:
             raise InvalidTokenException
-        return attrs
+        return data
 
 
-class CheckDuplicatesSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = ['username']
+class CheckDuplicatesSerializer(serializers.Serializer):
+    username = serializers.CharField()
 
-    def to_internal_value(self, data):
+    def validate_username(self, value):
         try:
-            User.objects.get(username=data['username'])
+            User.objects.get(username=value)
             raise TakenUsernameException
         except ObjectDoesNotExist:
-            return data
+            return value
 
 
 # Address
