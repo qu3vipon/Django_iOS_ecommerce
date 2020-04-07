@@ -1,7 +1,7 @@
 from rest_framework import generics
 from rest_framework.response import Response
 
-from .models import OrderProduct, Order, Product
+from .models import OrderProduct, Order, Product, Category
 from .permissions import MyCartOnly
 from .serializers import CartListSerializer, CartCreateSerializer, HomeSerializer
 
@@ -28,18 +28,22 @@ class MainListView(generics.ListAPIView):
     queryset = Product.objects.all()
     serializer_class = HomeSerializer
 
+    def md(self):
+        result = {}
+        categories = Category.objects.all()
+        for cat in categories:
+            key = cat.name
+            result[key] = HomeSerializer(self.queryset.filter(subcategory__category__name=key)[:6], many=True).data
+        return result
+
     def list(self, request):
         return Response({
+            "md": self.md(),
             "recommendation": HomeSerializer(self.queryset.order_by('-stock')[:8], many=True).data,
             "discount": HomeSerializer(self.queryset.order_by('-discount_rate')[:8], many=True).data,
             "new": HomeSerializer(self.queryset.order_by('-created_at')[:8], many=True).data,
+            "best": HomeSerializer(self.queryset.order_by('-sales')[:8], many=True).data,
         })
-
-
-# 추천상품 30개
-class RecommendationListView(generics.ListAPIView):
-    queryset = Product.objects.order_by('-stock')[:30]
-    serializer_class = HomeSerializer
 
 
 # 베스트 아이템 50개

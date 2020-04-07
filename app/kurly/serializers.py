@@ -43,13 +43,7 @@ class CartListSerializer(serializers.ModelSerializer):
 
         return rep
 
-
-# class OrderSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = Order
-#         fields = ['receiver', 'address', 'delivery', 'mobile', 'requirements', 'total_price', 'payment', 'ordered_at']
-#
-
+# 홈 화
 class HomeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
