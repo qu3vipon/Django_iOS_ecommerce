@@ -50,7 +50,7 @@ class CheckDuplicatesView(generics.GenericAPIView):
     def post(self, request):
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
-        return Response(True)
+        return Response(serializer.data)
 
 
 # 휴대폰 인증 관련

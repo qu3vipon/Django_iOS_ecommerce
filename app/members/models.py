@@ -38,4 +38,4 @@ class User(AbstractUser):
     gender = models.CharField(max_length=10, choices=GENDER_CHOICES, default='n')
 
     def __str__(self):
-        return f'username: {self.username}, email: {self.email}, name: {self.name}'
+        return f'username: {self.username}, email: {self.email}, name: {self.name}, mobile: {self.mobile}'
