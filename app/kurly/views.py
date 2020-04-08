@@ -26,7 +26,7 @@ class CartListCreateView(generics.ListCreateAPIView):
 
 
 # 장바구니 수량 변경
-class CartUpdateView(generics.UpdateAPIView):
+class CartDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = OrderProduct.objects.all()
     serializer_class = CartUpdateSerializer
     permission_classes = [MyCartOnly]

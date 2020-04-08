@@ -1,7 +1,7 @@
 from django.core.exceptions import ObjectDoesNotExist
 from rest_framework import serializers
 
-from utils.drf.excepts import ProductOptionNotMatchingException, InvalidOptionException, InvalidProductException
+from utils.drf.excepts import ProductOptionNotMatchingException
 from .models import OrderProduct, Option, Product
 
 
@@ -39,7 +39,7 @@ class CartSerializer(serializers.ModelSerializer):
         return rep
 
 
-# 장바구니 추가
+# 장바구니 추
 class CartCreateSerializer(serializers.ModelSerializer):
     product = ProductBasicSerializer
     option = OptionBasicSerializer
@@ -48,26 +48,24 @@ class CartCreateSerializer(serializers.ModelSerializer):
         model = OrderProduct
         fields = ['product', 'option', 'quantity']
 
-    def validate_product(self, value):
-        try:
-            Product.objects.get(pk=value)
-        except ObjectDoesNotExist:
-            raise InvalidProductException
-        return value
-
-    def validate_option(self, value):
-        try:
-            Option.objects.get(pk=value)
-        except ObjectDoesNotExist:
-            raise InvalidOptionException
-        return value
-
     def validate(self, data):
-        # 옵션이 존재할 경우, 상품과 옵션이 일치하는지 확인
+        # 옵션이 존재할 경우
         if data['option']:
+            # 상품과 옵션 일치 확인
             if data['option'].product != data['product']:
                 raise ProductOptionNotMatchingException
         return data
+
+    def create(self, validated_data):
+        try:
+            op = OrderProduct.objects.get(product=validated_data['product'], option=validated_data['option'])
+        except ObjectDoesNotExist:
+            return super().create(validated_data)
+
+        # 장바구니에 이미 존재하는 상품은 수량 추
+        op.quantity += validated_data['quantity']
+        op.save()
+        return op
 
     def to_representation(self, instance):
         return CartSerializer(instance).data
