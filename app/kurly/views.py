@@ -6,13 +6,7 @@ from .permissions import MyCartOnly
 from .serializers import CartSerializer, CartCreateSerializer, HomeSerializer, CartUpdateSerializer
 
 
-# 장바구니 생성
-class CartCreateView(generics.CreateAPIView):
-    queryset = OrderProduct.objects.all()
-    serializer_class = CartCreateSerializer()
-
-
-# 장바구니 목록 출력 & 추
+# 장바구니 목록 출력 & 추가
 class CartListCreateView(generics.ListCreateAPIView):
     queryset = OrderProduct.objects.all()
     permission_classes = [MyCartOnly]
