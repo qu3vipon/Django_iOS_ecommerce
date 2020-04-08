@@ -8,5 +8,5 @@ urlpatterns = [
     path('discount/', views.DiscountListView.as_view()),
     path('best/', views.BestListView.as_view()),
     path('cart/', views.CartListCreateView.as_view()),
-    path('cart/<int:pk>/', views.CartUpdateView.as_view()),
+    path('cart/<int:pk>/', views.CartDetailView.as_view()),
 ]
