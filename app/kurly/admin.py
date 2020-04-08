@@ -20,6 +20,7 @@ class CategoryAdmin(admin.ModelAdmin):
 
 @admin.register(Subcategory)
 class SubcategoryAdmin(admin.ModelAdmin):
+    list_display = ['name', 'id']
     inlines = [
         ProductInline
     ]
