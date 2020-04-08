@@ -3,7 +3,7 @@ from rest_framework.response import Response
 
 from .models import OrderProduct, Product, Category
 from .permissions import MyCartOnly
-from .serializers import CartSerializer, CartCreateSerializer, HomeSerializer
+from .serializers import CartSerializer, CartCreateSerializer, HomeSerializer, CartUpdateSerializer
 
 
 # 장바구니 생성
@@ -12,7 +12,7 @@ class CartCreateView(generics.CreateAPIView):
     serializer_class = CartCreateSerializer()
 
 
-# 장바구니 목록 출력
+# 장바구니 목록 출력 & 추
 class CartListCreateView(generics.ListCreateAPIView):
     queryset = OrderProduct.objects.all()
     permission_classes = [MyCartOnly]
@@ -29,6 +29,13 @@ class CartListCreateView(generics.ListCreateAPIView):
 
     def perform_create(self, serializer):
         return serializer.save(user=self.request.user)
+
+
+# 장바구니 수량 변경
+class CartUpdateView(generics.UpdateAPIView):
+    queryset = OrderProduct.objects.all()
+    serializer_class = CartUpdateSerializer
+    permission_classes = [MyCartOnly]
 
 
 # 메인 홈화면

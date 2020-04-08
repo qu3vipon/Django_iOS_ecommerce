@@ -11,7 +11,7 @@ from .serializers import UserSerializer, UserCreateSerializer, MobileTokenCreate
     MobileTokenAuthenticateSerializer, MobileSerializer, CheckDuplicatesSerializer
 
 
-class UserRetrieveView(generics.RetrieveAPIView):
+class UserDetailView(generics.RetrieveAPIView):
     permission_classes = [MyUserInfoOnly]
     queryset = User.objects.all()
     serializer_class = UserSerializer
@@ -48,7 +48,7 @@ class CheckDuplicatesView(generics.GenericAPIView):
     serializer_class = CheckDuplicatesSerializer
 
     def post(self, request):
-        serializer = CheckDuplicatesSerializer(data=request.data)
+        serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
         return Response(True)
 
