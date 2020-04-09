@@ -1,7 +1,7 @@
 from django.core.exceptions import ObjectDoesNotExist
 from rest_framework import serializers
 
-from utils.drf.excepts import ProductOptionNotMatchingException
+from utils.drf.excepts import ProductOptionNotMatchingException, UnauthorizedException
 from .models import OrderProduct, Option, Product, Image
 
 
@@ -65,7 +65,7 @@ class CartCreateSerializer(serializers.ModelSerializer):
             except ObjectDoesNotExist:
                 return super().create(validated_data)
         else:
-            raise
+            raise UnauthorizedException
 
         # 장바구니에 이미 존재하는 상품은 수량 추
         op.quantity += validated_data['quantity']

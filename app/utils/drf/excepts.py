@@ -64,11 +64,10 @@ class TakenUsernameException(APIException):
     default_code = 'TakenUsername'
 
 
-class UnauthenticatedException(APIException):
+class UnauthorizedException(APIException):
     status_code = status.HTTP_401_UNAUTHORIZED
-    default_detail = ''
-    default_code = 'Unauthenticated'
-
+    default_detail = '사용자 인증이 필요합니다.'
+    default_code = 'Unauthorized'
 
 # Product
 class ProductOptionNotMatchingException(APIException):
