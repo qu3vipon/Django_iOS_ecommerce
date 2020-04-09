@@ -61,6 +61,7 @@ class CartCreateSerializer(serializers.ModelSerializer):
             try:
                 op = OrderProduct.objects.get(product=validated_data['product'],
                                               option=validated_data['option'],
+                                              quantity=validated_data['quantity'],
                                               user=validated_data['user'])
             except ObjectDoesNotExist:
                 return super().create(validated_data)
