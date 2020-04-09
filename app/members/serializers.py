@@ -36,6 +36,11 @@ class MobileTokenCreateSerializer(serializers.ModelSerializer):
             return value
 
         if mobile.is_authenticated:
+            try:
+                User.objects.get(mobile=mobile)
+            except ObjectDoesNotExist:
+                self.sms_new_token(mobile)
+                raise ResendSMSException
             raise TakenNumberException
         else:
             self.sms_new_token(mobile)
