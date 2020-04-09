@@ -1,8 +1,3 @@
-# Django_iOS_ecommerce
-Django REST Framework API for e-commerce project
-
-<br>
-
 # Requirements
 - Python >= 3.7
 - Poetry >= 1.0
