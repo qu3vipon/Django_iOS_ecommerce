@@ -11,7 +11,7 @@ from rest_framework.authtoken.models import Token
 
 from utils.drf.coolsms import coolsms
 from utils.drf.excepts import InvalidNumberException, TakenNumberException, InvalidTokenException, \
-    TakenUsernameException, ResendSMSException, UnauthorizedMobile
+    TakenUsernameException, ResendSMSException, UnauthenticatedMobile
 from utils.drf.serializers import ModelSerializer
 from .models import User, Mobile, Address
 
@@ -117,7 +117,7 @@ class UserCreateSerializer(serializers.ModelSerializer):
         if mobile.is_authenticated:
             return mobile
         else:
-            raise UnauthorizedMobile
+            raise UnauthenticatedMobile
 
     def create(self, validated_data):
         validated_data['address'], _ = Address.objects.get_or_create(

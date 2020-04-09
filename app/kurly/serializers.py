@@ -2,7 +2,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from rest_framework import serializers
 
 from utils.drf.excepts import ProductOptionNotMatchingException
-from .models import OrderProduct, Option, Product
+from .models import OrderProduct, Option, Product, Image
 
 
 class ProductBasicSerializer(serializers.ModelSerializer):
@@ -29,9 +29,9 @@ class CartSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         rep = super().to_representation(instance)
 
-        # option이 존재할 경우, option만 전달
+        # option이 존재할 경우, product의 price 제거
         if rep['product'] and rep['option']:
-            rep.pop('product')
+            rep['product'].pop('price')
 
         # option이 존재하지 않을 경우, product만 전달
         if rep['option'] is None:
@@ -39,7 +39,7 @@ class CartSerializer(serializers.ModelSerializer):
         return rep
 
 
-# 장바구니 추
+# 장바구니 추가
 class CartCreateSerializer(serializers.ModelSerializer):
     product = ProductBasicSerializer
     option = OptionBasicSerializer
@@ -57,10 +57,15 @@ class CartCreateSerializer(serializers.ModelSerializer):
         return data
 
     def create(self, validated_data):
-        try:
-            op = OrderProduct.objects.get(product=validated_data['product'], option=validated_data['option'])
-        except ObjectDoesNotExist:
-            return super().create(validated_data)
+        if validated_data['user'].is_authenticated:
+            try:
+                op = OrderProduct.objects.get(product=validated_data['product'],
+                                              option=validated_data['option'],
+                                              user=validated_data['user'])
+            except ObjectDoesNotExist:
+                return super().create(validated_data)
+        else:
+            raise
 
         # 장바구니에 이미 존재하는 상품은 수량 추
         op.quantity += validated_data['quantity']
@@ -97,7 +102,19 @@ class CartUpdateSerializer(serializers.ModelSerializer):
 
 
 # 홈 화면
+class ImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Image
+        fields = ['id', 'image']
+
+
 class HomeSerializer(serializers.ModelSerializer):
+    thumb_image = serializers.SerializerMethodField('get_thumb_image')
+
+    def get_thumb_image(self, instance):
+        thumb_image = instance.images.get(name='thumb')
+        return ImageSerializer(instance=thumb_image).data
+
     class Meta:
         model = Product
-        fields = ['name', 'price', 'discount_rate', 'summary']
+        fields = ['id', 'thumb_image', 'name', 'price', 'discount_rate', 'summary']

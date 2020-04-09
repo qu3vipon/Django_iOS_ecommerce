@@ -44,7 +44,7 @@ class ResendSMSException(APIException):
     default_code = 'ResendSMS'
 
 
-class UnauthorizedMobile(APIException):
+class UnauthenticatedMobile(APIException):
     status_code = status.HTTP_400_BAD_REQUEST
     default_detail = '휴대폰 인증 필요'
     default_code = 'UnauthorizedMobileNumber'
@@ -64,19 +64,13 @@ class TakenUsernameException(APIException):
     default_code = 'TakenUsername'
 
 
+class UnauthenticatedException(APIException):
+    status_code = status.HTTP_401_UNAUTHORIZED
+    default_detail = ''
+    default_code = 'Unauthenticated'
+
+
 # Product
-class InvalidProductException(APIException):
-    status_code = status.HTTP_400_BAD_REQUEST
-    default_detail = '해당 상품이 존재하지 않습니다.'
-    default_code = 'InvalidProduct'
-
-
-class InvalidOptionException(APIException):
-    status_code = status.HTTP_400_BAD_REQUEST
-    default_detail = '해당 옵션이 존재하지 않습니다.'
-    default_code = 'InvalidOption'
-
-
 class ProductOptionNotMatchingException(APIException):
     status_code = status.HTTP_400_BAD_REQUEST
     default_detail = '상품과 옵션이 매칭되지 않습니다.'
