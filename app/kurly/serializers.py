@@ -111,7 +111,7 @@ class ImageSerializer(serializers.ModelSerializer):
         fields = ['id', 'image']
 
 
-class HomeSerializer(serializers.ModelSerializer):
+class HomeProductsSerializer(serializers.ModelSerializer):
     thumb_image = serializers.SerializerMethodField('get_thumb_image')
     discount_rate = serializers.FloatField()
 
