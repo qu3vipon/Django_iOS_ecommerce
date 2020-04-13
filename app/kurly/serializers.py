@@ -104,7 +104,6 @@ class CartUpdateSerializer(serializers.ModelSerializer):
         return CartSerializer(instance).data
 
 
-
 class ImageSerializer(serializers.ModelSerializer):
     class Meta:
         model = Image
@@ -113,12 +112,8 @@ class ImageSerializer(serializers.ModelSerializer):
 
 # 홈 화면
 class HomeProductsSerializer(serializers.ModelSerializer):
-    thumb_image = serializers.SerializerMethodField('get_thumb_image')
+    thumb_image = serializers.ImageField(source='images')
     discount_rate = serializers.FloatField()
-
-    def get_thumb_image(self, instance):
-        thumb_image = instance.images.filter(name='thumb')
-        return thumb_image[0].image.url
 
     class Meta:
         model = Product
