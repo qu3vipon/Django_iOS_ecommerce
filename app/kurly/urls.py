@@ -9,4 +9,6 @@ urlpatterns = [
     path('best/', views.BestListView.as_view()),
     path('cart/', views.CartListCreateView.as_view()),
     path('cart/<int:pk>/', views.CartDetailView.as_view()),
+    path('category/<int:pk>/', views.CategoryDetailView.as_view()),
+    path('subcategory/<int:pk>/', views.SubcategoryDetailView.as_view()),
 ]

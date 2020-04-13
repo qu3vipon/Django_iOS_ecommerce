@@ -1,7 +1,7 @@
 from rest_framework import generics
 from rest_framework.response import Response
 
-from .models import OrderProduct, Product, Category
+from .models import OrderProduct, Product, Category, Subcategory
 from .permissions import MyCartOnly
 from .serializers import CartSerializer, CartCreateSerializer, HomeProductsSerializer, CartUpdateSerializer
 
@@ -69,3 +69,25 @@ class NewListView(generics.ListAPIView):
 class DiscountListView(generics.ListAPIView):
     queryset = Product.objects.order_by('-discount_rate')[:50]
     serializer_class = HomeProductsSerializer
+
+
+# 서브카테고리 전체보기
+class CategoryDetailView(generics.RetrieveAPIView):
+    queryset = Category.objects.prefetch_related('subcategories__products')
+    serializer_class = HomeProductsSerializer
+
+    def get(self, request, *args, **kwargs):
+        result = []
+        sub_qs = self.get_object().subcategories.all()
+        for sub in sub_qs:
+            result += sub.products.all()[:2]
+        return Response(HomeProductsSerializer(result, many=True).data)
+
+
+# 서브카테고리 상품 목록
+class SubcategoryDetailView(generics.RetrieveAPIView):
+    queryset = Subcategory.objects.prefetch_related('products')
+    serializer_class = HomeProductsSerializer
+
+    def get(self, request, *args, **kwargs):
+        return Response(HomeProductsSerializer(self.get_object().products, many=True).data)
