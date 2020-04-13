@@ -1,7 +1,8 @@
+from django.db.models import Prefetch
 from rest_framework import generics
 from rest_framework.response import Response
 
-from .models import OrderProduct, Product, Category, Subcategory
+from .models import OrderProduct, Product, Category, Subcategory, Image
 from .permissions import MyCartOnly
 from .serializers import CartSerializer, CartCreateSerializer, HomeProductsSerializer, CartUpdateSerializer, \
     ProductDetailSerializer
@@ -37,6 +38,11 @@ class CartDetailView(generics.RetrieveUpdateDestroyAPIView):
 class MainAPIView(generics.GenericAPIView):
     queryset = Product.objects.all()
     serializer_class = HomeProductsSerializer
+
+    def get_queryset(self):
+        return Product.objects.prefetch_related(
+            Prefetch('images', queryset=Image.objects.filter(name='thumb'))
+        )
 
     def get(self, request):
         md_list = list()
@@ -74,8 +80,11 @@ class DiscountListView(generics.ListAPIView):
 
 # 서브카테고리 전체보기
 class CategoryDetailView(generics.RetrieveAPIView):
-    queryset = Category.objects.prefetch_related('subcategories__products')
+    queryset = Category.objects.all()
     serializer_class = HomeProductsSerializer
+
+    def get_queryset(self):
+        return Category.objects.prefetch_related('subcategories__products')
 
     def get(self, request, *args, **kwargs):
         result = []
@@ -87,8 +96,11 @@ class CategoryDetailView(generics.RetrieveAPIView):
 
 # 서브카테고리 상품 목록
 class SubcategoryDetailView(generics.RetrieveAPIView):
-    queryset = Subcategory.objects.prefetch_related('products')
+    queryset = Subcategory.objects.all()
     serializer_class = HomeProductsSerializer
+
+    def get_queryset(self):
+        return Subcategory.objects.prefetch_related('products')
 
     def get(self, request, *args, **kwargs):
         return Response(HomeProductsSerializer(self.get_object().products, many=True).data)
