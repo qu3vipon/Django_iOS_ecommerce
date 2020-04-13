@@ -104,13 +104,14 @@ class CartUpdateSerializer(serializers.ModelSerializer):
         return CartSerializer(instance).data
 
 
-# 홈 화면
+
 class ImageSerializer(serializers.ModelSerializer):
     class Meta:
         model = Image
-        fields = ['id', 'image']
+        fields = ['name', 'image']
 
 
+# 홈 화면
 class HomeProductsSerializer(serializers.ModelSerializer):
     thumb_image = serializers.SerializerMethodField('get_thumb_image')
     discount_rate = serializers.FloatField()
@@ -122,3 +123,14 @@ class HomeProductsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
         fields = ['id', 'thumb_image', 'name', 'price', 'discount_rate', 'summary']
+
+
+# 상품 상세설명
+class ProductDetailSerializer(serializers.ModelSerializer):
+    images = ImageSerializer(many=True)
+    discount_rate = serializers.FloatField()
+
+    class Meta:
+        model = Product
+        fields = ['id', 'name', 'summary', 'price', 'discount_rate', 'unit', 'amount', 'package', 'made_in',
+                  'description', 'images']
