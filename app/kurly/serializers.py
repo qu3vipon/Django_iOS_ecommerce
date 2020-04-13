@@ -6,9 +6,11 @@ from .models import OrderProduct, Option, Product, Image
 
 
 class ProductBasicSerializer(serializers.ModelSerializer):
+    discount_rate = serializers.FloatField()
+
     class Meta:
         model = Product
-        fields = ['pk', 'name', 'price']
+        fields = ['pk', 'name', 'price', 'discount_rate']
 
 
 class OptionBasicSerializer(serializers.ModelSerializer):
@@ -111,10 +113,11 @@ class ImageSerializer(serializers.ModelSerializer):
 
 class HomeSerializer(serializers.ModelSerializer):
     thumb_image = serializers.SerializerMethodField('get_thumb_image')
+    discount_rate = serializers.FloatField()
 
     def get_thumb_image(self, instance):
-        thumb_image = instance.images.get(name='thumb')
-        return ImageSerializer(instance=thumb_image).data
+        thumb_image = instance.images.filter(name='thumb')
+        return thumb_image[0].image.url
 
     class Meta:
         model = Product

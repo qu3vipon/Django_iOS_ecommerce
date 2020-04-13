@@ -1,8 +1,7 @@
-from django.db.models import Prefetch
 from rest_framework import generics
 from rest_framework.response import Response
 
-from .models import OrderProduct, Product, Category, Image
+from .models import OrderProduct, Product, Category
 from .permissions import MyCartOnly
 from .serializers import CartSerializer, CartCreateSerializer, HomeSerializer, CartUpdateSerializer
 
@@ -38,11 +37,12 @@ class MainListView(generics.ListAPIView):
     queryset = Product.objects.all()
     serializer_class = HomeSerializer
 
-    def list(self, request):
+    def get(self, request):
         md_list = list()
         categories = Category.objects.all()
         for cat in categories:
-            md_list.append(HomeSerializer(self.queryset.filter(subcategory__category__name=cat.name)[:6], many=True).data)
+            md_list.append(
+                HomeSerializer(self.queryset.filter(subcategory__category=cat)[:6], many=True).data)
 
         return Response({
             "md": md_list,
