@@ -3,7 +3,8 @@ from rest_framework.response import Response
 
 from .models import OrderProduct, Product, Category, Subcategory
 from .permissions import MyCartOnly
-from .serializers import CartSerializer, CartCreateSerializer, HomeProductsSerializer, CartUpdateSerializer
+from .serializers import CartSerializer, CartCreateSerializer, HomeProductsSerializer, CartUpdateSerializer, \
+    ProductDetailSerializer
 
 
 # 장바구니 목록 출력 & 추가
@@ -91,3 +92,12 @@ class SubcategoryDetailView(generics.RetrieveAPIView):
 
     def get(self, request, *args, **kwargs):
         return Response(HomeProductsSerializer(self.get_object().products, many=True).data)
+
+
+# 상품 세부설명
+class ProductDetailView(generics.RetrieveAPIView):
+    queryset = Product.objects.all()
+    serializer_class = ProductDetailSerializer
+
+    def get(self, request, pk):
+        return Response(ProductDetailSerializer(self.queryset.filter(id=pk), many=True).data)
