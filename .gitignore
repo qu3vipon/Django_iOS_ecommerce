@@ -3,8 +3,7 @@
 
 #### Management Files ###
 app/.management
-create_categories.py
-create_products.py
+create_*.py
 
 ### Secrets ###
 .media
