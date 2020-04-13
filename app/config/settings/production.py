@@ -9,6 +9,8 @@ INSTALLED_APPS += [
 ALLOWED_HOSTS += [
     '.ec2-15-164-49-32.ap-northeast-2.compute.amazonaws.com',
     '15.164.49.32',
+    'www.marketbroccoli.ga',
+    'marketbroccoli.ga',
 ]
 WSGI_APPLICATION = 'config.wsgi.production.application'
 
