@@ -33,7 +33,7 @@ class CartDetailView(generics.RetrieveUpdateDestroyAPIView):
 
 
 # 메인 홈화면
-class MainAPIView(generics.APIView):
+class MainAPIView(generics.GenericAPIView):
     queryset = Product.objects.all()
     serializer_class = HomeProductsSerializer
 
