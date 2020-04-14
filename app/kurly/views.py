@@ -1,5 +1,5 @@
-from django.db.models import Prefetch
 from rest_framework import generics
+from rest_framework import views
 from rest_framework.response import Response
 
 from .models import OrderProduct, Product, Category, Subcategory, Image
@@ -34,14 +34,25 @@ class CartDetailView(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [MyCartOnly]
 
 
-# 메인 홈화면
-class MainAPIView(generics.GenericAPIView):
+class MainImageView(views.APIView):
+    def get(self, request):
+        img_qs = Image.objects.filter(name='home').values_list('image', flat=True)
+        result = []
+        for img in img_qs:
+            result.append("https://wpsios-s3.s3.ap-northeast-2.amazonaws.com/media/" + img)
+
+        return Response(result)
+
+
+class MainMDProductsView(generics.GenericAPIView):
     queryset = Product.objects.all()
     serializer_class = HomeProductsSerializer
 
     def get_queryset(self):
         return Product.objects.prefetch_related(
-            Prefetch('images', queryset=Image.objects.filter(name='thumb'))
+            'images'
+        ).prefetch_related(
+            'subcategory__category'
         )
 
     def get(self, request):
@@ -49,33 +60,50 @@ class MainAPIView(generics.GenericAPIView):
         categories = Category.objects.all()
         for cat in categories:
             md_list.append(
-                HomeProductsSerializer(self.queryset.filter(subcategory__category=cat)[:6], many=True).data)
-
-        return Response({
-            "md": md_list,
-            "recommendation": HomeProductsSerializer(self.queryset.order_by('-stock')[:8], many=True).data,
-            "discount": HomeProductsSerializer(self.queryset.order_by('-discount_rate')[:8], many=True).data,
-            "new": HomeProductsSerializer(self.queryset.order_by('-created_at')[:8], many=True).data,
-            "best": HomeProductsSerializer(self.queryset.order_by('-sales')[:8], many=True).data,
-        })
+                self.serializer_class(self.queryset.filter(subcategory__category=cat)[:6], many=True).data
+            )
+        return Response(md_list)
 
 
-# 베스트 아이템 50개
-class BestListView(generics.ListAPIView):
-    queryset = Product.objects.order_by('-sales')[:50]
+class MainAPIView(generics.ListAPIView):
+    queryset = Product.objects.all()
     serializer_class = HomeProductsSerializer
 
 
-# 신상품 50개
-class NewListView(generics.ListAPIView):
-    queryset = Product.objects.order_by('-created_at')[:50]
-    serializer_class = HomeProductsSerializer
+class RecommendationAPIView(MainAPIView):
+    def get_queryset(self):
+        count = self.request.query_params.get('count', None)
+        if count is None:
+            return Product.objects.order_by('-stock')[:30]
+        else:
+            return Product.objects.order_by('-stock')[:int(count)]
 
 
-# 알뜰상품 50개
-class DiscountListView(generics.ListAPIView):
-    queryset = Product.objects.order_by('-discount_rate')[:50]
-    serializer_class = HomeProductsSerializer
+class DiscountAPIView(MainAPIView):
+    def get_queryset(self):
+        count = self.request.query_params.get('count', None)
+        if count is None:
+            return Product.objects.order_by('-discount_rate')[:30]
+        else:
+            return Product.objects.order_by('-discount_rate')[:int(count)]
+
+
+class NewAPIView(MainAPIView):
+    def get_queryset(self):
+        count = self.request.query_params.get('count', None)
+        if count is None:
+            return Product.objects.order_by('-created_at')[:30]
+        else:
+            return Product.objects.order_by('-created_at')[:int(count)]
+
+
+class BestAPIView(MainAPIView):
+    def get_queryset(self):
+        count = self.request.query_params.get('count', None)
+        if count is None:
+            return Product.objects.order_by('-sales')[:30]
+        else:
+            return Product.objects.order_by('-sales')[:int(count)]
 
 
 # 서브카테고리 전체보기
