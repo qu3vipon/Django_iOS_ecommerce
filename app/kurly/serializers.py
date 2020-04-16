@@ -5,15 +5,19 @@ from utils.drf.excepts import ProductOptionNotMatchingException, UnauthorizedExc
 from .models import OrderProduct, Option, Product, Image
 
 
-class ProductBasicSerializer(serializers.ModelSerializer):
+class ProductSerializer(serializers.ModelSerializer):
     discount_rate = serializers.FloatField()
+    image = serializers.SerializerMethodField('get_image')
+
+    def get_image(self, instance):
+        return instance.images.get(name='thumb').image.url
 
     class Meta:
         model = Product
-        fields = ['pk', 'name', 'price', 'discount_rate']
+        fields = ['pk', 'name', 'price', 'discount_rate', 'image']
 
 
-class OptionBasicSerializer(serializers.ModelSerializer):
+class OptionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Option
         fields = ['pk', 'name', 'price', 'product']
@@ -27,12 +31,13 @@ class ImageSerializer(serializers.ModelSerializer):
 
 # 전체 장바구니 출력
 class CartSerializer(serializers.ModelSerializer):
-    product = ProductBasicSerializer()
-    option = OptionBasicSerializer()
+    product = ProductSerializer()
+    option = OptionSerializer()
 
     class Meta:
         model = OrderProduct
         fields = ['id', 'product', 'option', 'quantity']
+        depth = 1
 
     def to_representation(self, instance):
         rep = super().to_representation(instance)
@@ -49,8 +54,8 @@ class CartSerializer(serializers.ModelSerializer):
 
 # 장바구니 추가
 class CartCreateSerializer(serializers.ModelSerializer):
-    product = ProductBasicSerializer
-    option = OptionBasicSerializer
+    product = ProductSerializer
+    option = OptionSerializer
 
     class Meta:
         model = OrderProduct
@@ -69,7 +74,6 @@ class CartCreateSerializer(serializers.ModelSerializer):
             try:
                 op = OrderProduct.objects.get(product=validated_data['product'],
                                               option=validated_data['option'],
-                                              quantity=validated_data['quantity'],
                                               user=validated_data['user'])
             except ObjectDoesNotExist:
                 return super().create(validated_data)
@@ -87,8 +91,8 @@ class CartCreateSerializer(serializers.ModelSerializer):
 
 # 장바구니 옵션/수량 업데이트
 class CartUpdateSerializer(serializers.ModelSerializer):
-    product = ProductBasicSerializer
-    option = OptionBasicSerializer
+    product = ProductSerializer
+    option = OptionSerializer
 
     class Meta:
         model = OrderProduct
@@ -128,8 +132,17 @@ class HomeProductsSerializer(serializers.ModelSerializer):
 class ProductDetailSerializer(serializers.ModelSerializer):
     images = ImageSerializer(many=True)
     discount_rate = serializers.FloatField()
+    options = OptionSerializer(many=True)
 
     class Meta:
         model = Product
         fields = ['id', 'name', 'summary', 'price', 'discount_rate', 'unit', 'amount', 'package', 'made_in',
-                  'description', 'images']
+                  'description', 'images', 'options']
+
+
+class ProductOptionSerializer(serializers.ModelSerializer):
+    options = OptionSerializer(many=True)
+
+    class Meta:
+        model = Product
+        fields = ['options']
