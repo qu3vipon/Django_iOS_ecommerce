@@ -99,6 +99,13 @@ class OrderProduct(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='orderproducts')
     option = models.ForeignKey(Option, null=True, blank=True, related_name='orderproducts', on_delete=models.CASCADE)
     quantity = models.PositiveSmallIntegerField(default=1)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['created_at']
+        indexes = [
+            models.Index(fields=['created_at'])
+        ]
 
     def __str__(self):
         return f'{self.product}, {self.option}, {self.quantity}'

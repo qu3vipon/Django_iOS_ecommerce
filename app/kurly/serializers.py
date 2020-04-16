@@ -20,7 +20,7 @@ class ProductSerializer(serializers.ModelSerializer):
 class OptionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Option
-        fields = ['pk', 'name', 'price', 'product']
+        fields = ['pk', 'name', 'price']
 
 
 class ImageSerializer(serializers.ModelSerializer):
