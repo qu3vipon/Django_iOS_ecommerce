@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from .models import OrderProduct, Product, Category, Subcategory, Image
 from .permissions import MyCartOnly
 from .serializers import CartSerializer, CartCreateSerializer, HomeProductsSerializer, CartUpdateSerializer, \
-    ProductDetailSerializer
+    ProductDetailSerializer, ProductOptionSerializer
 
 
 # 장바구니 목록 출력 & 추가
@@ -139,5 +139,11 @@ class ProductDetailView(generics.RetrieveAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductDetailSerializer
 
-    def get(self, request, pk):
-        return Response(ProductDetailSerializer(self.queryset.filter(id=pk), many=True).data)
+    # def get(self, request, pk):
+    #     return Response(ProductDetailSerializer(self.queryset.filter(id=pk), many=True).data)
+
+
+# 상품의 옵션 정보
+class ProductOptionView(generics.RetrieveAPIView):
+    queryset = Product.objects.all()
+    serializer_class = ProductOptionSerializer

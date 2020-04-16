@@ -21,4 +21,5 @@ urlpatterns = [
 
     # 상품 세부
     path('product/<int:pk>/', views.ProductDetailView.as_view()),
+    path('product/<int:pk>/option/', views.ProductOptionView.as_view()),
 ]
