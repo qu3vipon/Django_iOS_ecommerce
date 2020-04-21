@@ -75,3 +75,9 @@ class ProductOptionNotMatchingException(APIException):
     status_code = status.HTTP_400_BAD_REQUEST
     default_detail = '상품과 옵션이 매칭되지 않습니다.'
     default_code = 'ProductOptionNotMatching'
+
+
+class InvalidOrderingException(APIException):
+    status_code = status.HTTP_400_BAD_REQUEST
+    default_detail = '허용하지 않는 정렬 기준입니다.'
+    default_code = 'InvalidOrderingOption'
