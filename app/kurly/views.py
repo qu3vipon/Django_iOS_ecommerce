@@ -2,6 +2,7 @@ from rest_framework import generics
 from rest_framework import views
 from rest_framework.response import Response
 
+from utils.drf.excepts import InvalidOrderingException
 from .models import OrderProduct, Product, Category, Subcategory, Image
 from .permissions import MyCartOnly
 from .serializers import CartSerializer, CartCreateSerializer, HomeProductsSerializer, CartUpdateSerializer, \
@@ -82,28 +83,58 @@ class RecommendationAPIView(MainAPIView):
 class DiscountAPIView(MainAPIView):
     def get_queryset(self):
         count = self.request.query_params.get('count', None)
-        if count is None:
-            return Product.objects.order_by('-discount_rate')[:30]
-        else:
-            return Product.objects.order_by('-discount_rate')[:int(count)]
+        try:
+            ordering = self.kwargs['ordering']
+            if ordering not in ['-created_at', '-sales', 'price', '-price']:
+                raise InvalidOrderingException
+
+            if count is None:
+                return Product.objects.order_by('-discount_rate', f'{ordering}')[:30]
+            else:
+                return Product.objects.order_by('-discount_rate', f'{ordering}')[:int(count)]
+        except KeyError:
+            if count in None:
+                return Product.objects.order_by('-discount_rate')[:30]
+            else:
+                return Product.objects.order_by('-discount_rate')[:int(count)]
 
 
 class NewAPIView(MainAPIView):
     def get_queryset(self):
         count = self.request.query_params.get('count', None)
-        if count is None:
-            return Product.objects.order_by('-created_at')[:30]
-        else:
-            return Product.objects.order_by('-created_at')[:int(count)]
+        try:
+            ordering = self.kwargs['ordering']
+            if ordering not in ['-sales', '-price', 'price']:
+                raise InvalidOrderingException
+
+            if count is None:
+                return Product.objects.order_by('-created_at', f'{ordering}')[:30]
+            else:
+                return Product.objects.order_by('-created_at', f'{ordering}')[:int(count)]
+        except KeyError:
+            if count is None:
+                return Product.objects.order_by('-created_at')[:30]
+            else:
+                return Product.objects.order_by('-created_at')[:int(count)]
 
 
 class BestAPIView(MainAPIView):
     def get_queryset(self):
         count = self.request.query_params.get('count', None)
-        if count is None:
-            return Product.objects.order_by('-sales')[:30]
-        else:
-            return Product.objects.order_by('-sales')[:int(count)]
+        try:
+            ordering = self.kwargs['ordering']
+            if ordering not in ['-created_at', '-sales', '-price', 'price']:
+                raise InvalidOrderingException
+
+            if count is None:
+                return Product.objects.order_by('-sales', f'{ordering}')[:30]
+            else:
+                return Product.objects.order_by('-sales', f'{ordering}')[:int(count)]
+        except KeyError:
+            if count is None:
+                return Product.objects.order_by('-sales')[:30]
+            else:
+                return Product.objects.order_by('-sales')[:int(count)]
 
 
 # 서브카테고리 전체보기

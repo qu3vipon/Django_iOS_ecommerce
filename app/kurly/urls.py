@@ -8,8 +8,11 @@ urlpatterns = [
     path('md/', views.MainMDProductsView.as_view()),
     path('recommend/', views.RecommendationAPIView.as_view()),
     path('new/', views.NewAPIView.as_view()),
+    path('new/<str:ordering>/', views.NewAPIView.as_view()),
     path('discount/', views.DiscountAPIView.as_view()),
+    path('discount/<str:ordering>/', views.DiscountAPIView.as_view()),
     path('best/', views.BestAPIView.as_view()),
+    path('best/<str:ordering>/', views.BestAPIView.as_view()),
 
     # 장바구니
     path('cart/', views.CartListCreateView.as_view()),
