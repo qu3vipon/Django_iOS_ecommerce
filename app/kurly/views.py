@@ -93,7 +93,7 @@ class DiscountAPIView(MainAPIView):
             else:
                 return Product.objects.order_by('-discount_rate', f'{ordering}')[:int(count)]
         except KeyError:
-            if count in None:
+            if count is None:
                 return Product.objects.order_by('-discount_rate')[:30]
             else:
                 return Product.objects.order_by('-discount_rate')[:int(count)]
