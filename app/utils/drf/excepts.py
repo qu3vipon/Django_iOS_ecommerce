@@ -77,6 +77,7 @@ class ProductOptionNotMatchingException(APIException):
     default_code = 'ProductOptionNotMatching'
 
 
+# Main - QuerySet Ordering
 class InvalidOrderingException(APIException):
     status_code = status.HTTP_400_BAD_REQUEST
     default_detail = '허용하지 않는 정렬 기준입니다.'

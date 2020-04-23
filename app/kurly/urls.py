@@ -16,6 +16,7 @@ urlpatterns = [
 
     # 장바구니
     path('cart/', views.CartListCreateView.as_view()),
+    path('cart/count/', views.CartCountView.as_view()),
     path('cart/<int:pk>/', views.CartDetailView.as_view()),
 
     # 카테고리

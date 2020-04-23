@@ -35,6 +35,12 @@ class CartDetailView(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [MyCartOnly]
 
 
+class CartCountView(views.APIView):
+    def get(self, request):
+        count = OrderProduct.objects.filter(user=request.user.pk).count()
+        return Response(count)
+
+
 class MainImageView(views.APIView):
     def get(self, request):
         img_qs = Image.objects.filter(name='home').values_list('image', flat=True)
