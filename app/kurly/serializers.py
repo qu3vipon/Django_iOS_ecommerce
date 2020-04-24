@@ -23,6 +23,10 @@ class OptionSerializer(serializers.ModelSerializer):
         fields = ['pk', 'name', 'price', 'product']
 
 
+class NonLoginOptionSerializer(OptionSerializer):
+    product = ProductSerializer()
+
+
 class ImageSerializer(serializers.ModelSerializer):
     class Meta:
         model = Image
@@ -140,6 +144,16 @@ class ProductDetailSerializer(serializers.ModelSerializer):
                   'description', 'images', 'options']
 
 
+# 비로그인 장바구니용
+class ProductBriefSerializer(ProductSerializer):
+    option = OptionSerializer()
+
+    class Meta:
+        model = Product
+        fields = ['pk', 'name', 'price', 'discount_rate', 'image', 'option']
+
+
+# 상품의 옵션 정보
 class ProductOptionSerializer(serializers.ModelSerializer):
     options = OptionSerializer(many=True)
 
