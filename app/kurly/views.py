@@ -1,12 +1,14 @@
+from django.core.exceptions import ObjectDoesNotExist
 from rest_framework import generics
 from rest_framework import views
 from rest_framework.response import Response
 
-from utils.drf.excepts import InvalidOrderingException
-from .models import OrderProduct, Product, Category, Subcategory, Image
+from utils.drf.excepts import InvalidOrderingException, InvalidOptionIdException
+from .models import OrderProduct, Product, Category, Subcategory, Image, Option
 from .permissions import MyCartOnly
 from .serializers import CartSerializer, CartCreateSerializer, HomeProductsSerializer, CartUpdateSerializer, \
-    ProductDetailSerializer, ProductOptionSerializer
+    ProductDetailSerializer, ProductOptionSerializer, ProductBriefSerializer, ProductSerializer, OptionSerializer, \
+    NonLoginOptionSerializer
 
 
 # 장바구니 목록 출력 & 추가
@@ -22,7 +24,7 @@ class CartListCreateView(generics.ListCreateAPIView):
 
     # OrderProduct(order = None) -> 장바구니
     def get_queryset(self):
-        return OrderProduct.objects.filter(order=None)
+        return OrderProduct.objects.filter(order=None, user=self.request.user)
 
     def perform_create(self, serializer):
         return serializer.save(user=self.request.user)
@@ -33,6 +35,13 @@ class CartDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = OrderProduct.objects.all()
     serializer_class = CartUpdateSerializer
     permission_classes = [MyCartOnly]
+
+
+# 장바구니의 상품 개수
+class CartCountView(views.APIView):
+    def get(self, request):
+        count = OrderProduct.objects.filter(user=request.user.pk).count()
+        return Response(count)
 
 
 class MainImageView(views.APIView):
@@ -170,11 +179,34 @@ class ProductDetailView(generics.RetrieveAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductDetailSerializer
 
-    # def get(self, request, pk):
-    #     return Response(ProductDetailSerializer(self.queryset.filter(id=pk), many=True).data)
-
 
 # 상품의 옵션 정보
 class ProductOptionView(generics.RetrieveAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductOptionSerializer
+
+
+# 비로그인 장바구니용 상품 정보
+class ProductNonLoginView(generics.GenericAPIView):
+    queryset = Product.objects.all()
+
+    def get_object(self):
+        product_id = self.request.query_params.get('id', None)
+        option_id = self.request.query_params.get('option', None)
+
+        if option_id is None:
+            return Product.objects.get(pk=product_id)
+        else:
+            try:
+                Option.objects.get(pk=option_id, product=product_id)
+                return Option.objects.get(pk=option_id, product=product_id)
+            except ObjectDoesNotExist:
+                raise InvalidOptionIdException
+
+    def get(self, request):
+        option_id = self.request.query_params.get('option', None)
+
+        if option_id is None:
+            return Response(ProductSerializer(self.get_object()).data)
+        else:
+            return Response(NonLoginOptionSerializer(self.get_object()).data)

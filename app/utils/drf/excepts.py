@@ -77,6 +77,13 @@ class ProductOptionNotMatchingException(APIException):
     default_code = 'ProductOptionNotMatching'
 
 
+class InvalidOptionIdException(APIException):
+    status_code = status.HTTP_400_BAD_REQUEST
+    default_detail = '옵션 id가 올바르지 않습니다.'
+    default_code = 'InvalidOptionId'
+
+
+# Main - QuerySet Ordering
 class InvalidOrderingException(APIException):
     status_code = status.HTTP_400_BAD_REQUEST
     default_detail = '허용하지 않는 정렬 기준입니다.'
