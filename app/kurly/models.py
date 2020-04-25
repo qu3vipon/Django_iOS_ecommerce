@@ -36,6 +36,8 @@ class Order(models.Model):
 
 class Category(models.Model):
     name = models.CharField(max_length=30)
+    image_bk = models.ImageField(upload_to='')
+    image_pp = models.ImageField(upload_to='')
 
     def __str__(self):
         return self.name

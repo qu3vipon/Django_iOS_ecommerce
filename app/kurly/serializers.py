@@ -163,8 +163,6 @@ class ProductOptionSerializer(serializers.ModelSerializer):
 
 
 class SubcategorySerializer(serializers.ModelSerializer):
-    # images = ImageSerializer(many=True)
-
     class Meta:
         model = Subcategory
         fields = ['id', 'name']
@@ -178,11 +176,7 @@ class CategorySerializer(serializers.ModelSerializer):
         fields = [
             'id',
             'name',
+            'image_bk',
+            'image_pp',
             'subcategories',
         ]
-
-    def to_representation(self, instance):
-        rep = super().to_representation(instance)
-        rep['subcategories'][0]={'id': None, 'name' : '전체보기'}
-        return rep
-
