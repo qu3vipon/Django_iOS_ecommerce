@@ -183,6 +183,6 @@ class CategorySerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         rep = super().to_representation(instance)
-        rep['subcategories'][0]={'id': None, 'name' : '전체보'}
+        rep['subcategories'][0]={'id': None, 'name' : '전체보기'}
         return rep
 
