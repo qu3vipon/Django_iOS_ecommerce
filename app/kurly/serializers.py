@@ -159,13 +159,18 @@ class ProductOptionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Product
-        fields = ['options']
+        fields = [
+            'options',
+        ]
 
 
 class SubcategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Subcategory
-        fields = ['id', 'name']
+        fields = [
+            'id',
+            'name',
+        ]
 
 
 class CategorySerializer(serializers.ModelSerializer):
