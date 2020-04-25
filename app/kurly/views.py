@@ -1,5 +1,5 @@
 from django.core.exceptions import ObjectDoesNotExist
-from django.db.models import OuterRef, Subquery, F, Prefetch
+from django.db.models import OuterRef, Subquery, F
 from rest_framework import generics
 from rest_framework import views
 from rest_framework.response import Response
@@ -142,12 +142,9 @@ class BestAPIView(MainAPIView):
 
 
 # 카테고리 기본정보
-class CategoryView(generics.ListAPIView):
+class CategoryView(generics.RetrieveAPIView):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
-
-    def get(self, request, pk):
-        return Response(CategorySerializer(self.queryset.filter(id=pk), many=True).data)
 
 
 # 카테고리 전체보기
