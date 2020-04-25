@@ -1,5 +1,5 @@
 from django.core.exceptions import ObjectDoesNotExist
-from django.db.models import OuterRef, Subquery, F
+from django.db.models import OuterRef, Subquery, F, Prefetch
 from rest_framework import generics
 from rest_framework import views
 from rest_framework.response import Response
@@ -8,8 +8,7 @@ from utils.drf.excepts import InvalidOrderingException, InvalidOptionIdException
 from .models import OrderProduct, Product, Category, Subcategory, Image, Option
 from .permissions import MyCartOnly
 from .serializers import CartSerializer, CartCreateSerializer, HomeProductsSerializer, CartUpdateSerializer, \
-    ProductDetailSerializer, ProductOptionSerializer, ProductBriefSerializer, ProductSerializer, OptionSerializer, \
-    NonLoginOptionSerializer, SubcategorySerializer, CategorySerializer
+    ProductDetailSerializer, ProductOptionSerializer, ProductSerializer, NonLoginOptionSerializer, CategorySerializer
 
 
 # 장바구니 목록 출력 & 추가
@@ -23,7 +22,7 @@ class CartListCreateView(generics.ListCreateAPIView):
         elif self.request.method == 'POST':
             return CartCreateSerializer
 
-    # OrderProduct(order = None) -> 장바구니
+    # OrderProduct(order=None) -> 장바구니
     def get_queryset(self):
         return OrderProduct.objects.filter(order=None, user=self.request.user)
 
@@ -51,34 +50,29 @@ class MainImageView(views.APIView):
         result = []
         for img in img_qs:
             result.append("https://wpsios-s3.s3.ap-northeast-2.amazonaws.com/media/" + img)
-
         return Response(result)
 
 
-class MainMDProductsView(generics.GenericAPIView):
+# 상속을 위한 View (나중에 개선)
+class MainAPIView(generics.ListAPIView):
     queryset = Product.objects.all()
     serializer_class = HomeProductsSerializer
 
     def get_queryset(self):
         return Product.objects.prefetch_related(
             'images'
-        ).prefetch_related(
-            'subcategory__category'
         )
 
+
+class MDProductsView(MainAPIView):
     def get(self, request):
-        md_list = list()
-        categories = Category.objects.all()
-        for cat in categories:
-            md_list.append(
-                self.serializer_class(self.queryset.filter(subcategory__category=cat)[:6], many=True).data
-            )
-        return Response(md_list)
-
-
-class MainAPIView(generics.ListAPIView):
-    queryset = Product.objects.all()
-    serializer_class = HomeProductsSerializer
+        # Subquery가 될 QuerySet
+        sub_products = Product.objects.filter(subcategory=OuterRef('subcategory')).order_by('pk')
+        # pk가 3임을 알려주기(메모하기)
+        products = self.get_queryset().annotate(
+            min_pk=Subquery(sub_products.values('pk')[2:3])
+        ).filter(pk__lt=F('min_pk')).order_by('pk')
+        return Response(self.serializer_class(products, many=True).data)
 
 
 class RecommendationAPIView(MainAPIView):
@@ -147,7 +141,8 @@ class BestAPIView(MainAPIView):
                 return Product.objects.order_by('-sales')[:int(count)]
 
 
-class CategoryListView(generics.ListAPIView):
+# 카테고리 기본정보
+class CategoryView(generics.ListAPIView):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
 
@@ -155,39 +150,32 @@ class CategoryListView(generics.ListAPIView):
         return Response(CategorySerializer(self.queryset.filter(id=pk), many=True).data)
 
 
-# # 서브카테고리 전체보기
-# class CategoryDetailView(generics.RetrieveAPIView):
-#     queryset = Category.objects.all()
-#     serializer_class = HomeProductsSerializer
-#
-#     def get_queryset(self):
-#         return Category.objects.prefetch_related('subcategories__products')
-#
-#     def get(self, request, *args, **kwargs):
-#         result = []
-#         sub_qs = self.get_object().subcategories.all()
-#         for sub in sub_qs:
-#             result += sub.products.all()[:2]
-#         return Response(HomeProductsSerializer(result, many=True).data)
-#
-#
-# # 서브카테고리 상품 목록
-# class SubcategoryDetailView(generics.RetrieveAPIView):
-#     queryset = Subcategory.objects.all()
-#     serializer_class = HomeProductsSerializer
-#
-#     def get(self, request, *args, **kwargs):
-#         subcategory = self.request.query_params.get('subcategory', None)
-#         if subcategory is None:
-#             # Subquery가 될 QuerySet
-#             sub_products = Product.objects.filter(subcategory=OuterRef('subcategory')).order_by('pk')
-#             # pk가 3임을 알려주기(메모하기)
-#             products = Product.objects.annotate(
-#                 min_pk=Subquery(sub_products.values('pk')[2:3])
-#             ).filter(pk__lt=F('min_pk')).order_by('pk')
-#             return Response(HomeProductsSerializer(self.get_object().products, many=True).data)
-#         else:
-#             return Response(HomeProductsSerializer(self.get_object().products, many=True).data)
+# 카테고리 전체보기
+class CategoryAllView(generics.RetrieveAPIView):
+    queryset = Category.objects.all()
+    serializer_class = HomeProductsSerializer
+
+    def get_queryset(self):
+        return Category.objects.prefetch_related('subcategories__products')
+
+    def get(self, request, *args, **kwargs):
+        result = []
+        sub_qs = self.get_object().subcategories.all()
+        for sub in sub_qs:
+            result += sub.products.all()[:3]
+        return Response(HomeProductsSerializer(result, many=True).data)
+
+
+# 서브카테고리 상품 목록
+class SubcategoryDetailView(generics.RetrieveAPIView):
+    queryset = Subcategory.objects.all()
+    serializer_class = HomeProductsSerializer
+
+    def get_queryset(self):
+        return Subcategory.objects.prefetch_related('products')
+
+    def get(self, request, *args, **kwargs):
+        return Response(HomeProductsSerializer(self.get_object().products, many=True).data)
 
 
 # 상품 세부설명

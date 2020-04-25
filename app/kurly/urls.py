@@ -5,7 +5,7 @@ from . import views
 urlpatterns = [
     # 메인
     path('images/', views.MainImageView.as_view()),
-    path('md/', views.MainMDProductsView.as_view()),
+    path('md/', views.MDProductsView.as_view()),
     path('recommend/', views.RecommendationAPIView.as_view()),
     path('new/', views.NewAPIView.as_view()),
     path('new/<str:ordering>/', views.NewAPIView.as_view()),
@@ -20,9 +20,9 @@ urlpatterns = [
     path('cart/<int:pk>/', views.CartDetailView.as_view()),
 
     # 카테고리
-    path('categorylist/<int:pk>/', views.CategoryListView.as_view()),
-    # path('category/<int:pk>/', views.SubcategoryDetailView.as_view()),
-    # path('subcategory/<int:pk>/', views.SubcategoryDetailView.as_view()),
+    path('category/<int:pk>/', views.CategoryView.as_view()),
+    path('category/<int:pk>/all/', views.CategoryAllView.as_view()),
+    path('subcategory/<int:pk>/', views.SubcategoryDetailView.as_view()),
 
     # 상품 세부
     path('product/', views.ProductNonLoginView.as_view()),
