@@ -20,8 +20,9 @@ urlpatterns = [
     path('cart/<int:pk>/', views.CartDetailView.as_view()),
 
     # 카테고리
-    path('category/<int:pk>/', views.CategoryDetailView.as_view()),
-    path('subcategory/<int:pk>/', views.SubcategoryDetailView.as_view()),
+    path('categorylist/<int:pk>/', views.CategoryListView.as_view()),
+    # path('category/<int:pk>/', views.SubcategoryDetailView.as_view()),
+    # path('subcategory/<int:pk>/', views.SubcategoryDetailView.as_view()),
 
     # 상품 세부
     path('product/', views.ProductNonLoginView.as_view()),

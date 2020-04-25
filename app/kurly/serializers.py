@@ -2,7 +2,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from rest_framework import serializers
 
 from utils.drf.excepts import ProductOptionNotMatchingException, UnauthorizedException
-from .models import OrderProduct, Option, Product, Image
+from .models import OrderProduct, Option, Product, Image, Subcategory, Category
 
 
 class ProductSerializer(serializers.ModelSerializer):
@@ -160,3 +160,29 @@ class ProductOptionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
         fields = ['options']
+
+
+class SubcategorySerializer(serializers.ModelSerializer):
+    # images = ImageSerializer(many=True)
+
+    class Meta:
+        model = Subcategory
+        fields = ['id', 'name']
+
+
+class CategorySerializer(serializers.ModelSerializer):
+    subcategories = SubcategorySerializer(many=True)
+
+    class Meta:
+        model = Category
+        fields = [
+            'id',
+            'name',
+            'subcategories',
+        ]
+
+    def to_representation(self, instance):
+        rep = super().to_representation(instance)
+        rep['subcategories'][0]={'id': None, 'name' : '전체보'}
+        return rep
+
