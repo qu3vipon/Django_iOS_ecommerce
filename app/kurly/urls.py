@@ -20,7 +20,7 @@ urlpatterns = [
     path('cart/<int:pk>/', views.CartDetailView.as_view()),
 
     # 카테고리
-    path('category/<int:pk>/', views.CategoryView.as_view()),
+    path('category/', views.CategoryView.as_view()),
     path('category/<int:pk>/all/', views.CategoryAllView.as_view()),
     path('subcategory/<int:pk>/', views.SubcategoryDetailView.as_view()),
 

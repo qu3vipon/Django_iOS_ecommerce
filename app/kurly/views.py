@@ -142,9 +142,12 @@ class BestAPIView(MainAPIView):
 
 
 # 카테고리 기본정보
-class CategoryView(generics.RetrieveAPIView):
+class CategoryView(generics.ListAPIView):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
+
+    def get_queryset(self):
+        return Category.objects.order_by('id')
 
 
 # 카테고리 전체보기
