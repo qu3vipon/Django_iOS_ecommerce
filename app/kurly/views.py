@@ -54,7 +54,7 @@ class MainImageView(views.APIView):
 
 
 # Abstract View
-class MainAPIView(generics.ListAPIView):
+class MainBaseAPIView(generics.ListAPIView):
     queryset = Product.objects.all()
     serializer_class = HomeProductsSerializer
 
@@ -64,7 +64,7 @@ class MainAPIView(generics.ListAPIView):
         )
 
 
-class MDProductsAPIView(MainAPIView):
+class MDProductsAPIView(MainBaseAPIView):
     def get(self, request):
         # Subquery가 될 QuerySet
         sub_products = Product.objects.filter(subcategory=OuterRef('subcategory')).order_by('pk')
@@ -75,7 +75,7 @@ class MDProductsAPIView(MainAPIView):
         return Response(self.serializer_class(products, many=True).data)
 
 
-class RecommendationAPIView(MainAPIView):
+class RecommendationAPIView(MainBaseAPIView):
     def get_queryset(self):
         queryset = super().get_queryset()
         count = self.request.query_params.get('count', None)
@@ -85,7 +85,7 @@ class RecommendationAPIView(MainAPIView):
             return queryset.order_by('-stock')[:int(count)]
 
 
-class DiscountAPIView(MainAPIView):
+class DiscountAPIView(MainBaseAPIView):
     def get_queryset(self):
         queryset = super().get_queryset()
         count = self.request.query_params.get('count', None)
@@ -105,7 +105,7 @@ class DiscountAPIView(MainAPIView):
                 return queryset.order_by('-discount_rate')[:int(count)]
 
 
-class NewAPIView(MainAPIView):
+class NewAPIView(MainBaseAPIView):
     def get_queryset(self):
         queryset = super().get_queryset()
         count = self.request.query_params.get('count', None)
@@ -125,7 +125,7 @@ class NewAPIView(MainAPIView):
                 return queryset.order_by('-created_at')[:int(count)]
 
 
-class BestAPIView(MainAPIView):
+class BestAPIView(MainBaseAPIView):
     def get_queryset(self):
         queryset = super().get_queryset()
         count = self.request.query_params.get('count', None)
