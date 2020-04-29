@@ -58,9 +58,6 @@ class CartSerializer(serializers.ModelSerializer):
 
 # 장바구니 추가
 class CartCreateSerializer(serializers.ModelSerializer):
-    product = ProductSerializer
-    option = OptionSerializer
-
     class Meta:
         model = OrderProduct
         fields = ['product', 'option', 'quantity']
@@ -124,8 +121,7 @@ class HomeProductsSerializer(serializers.ModelSerializer):
     discount_rate = serializers.FloatField()
 
     def get_thumb_image(self, instance):
-        thumb_image = instance.images.filter(name='thumb')
-        return thumb_image[0].image.url
+        return instance.thumb_image[0].image.url
 
     class Meta:
         model = Product

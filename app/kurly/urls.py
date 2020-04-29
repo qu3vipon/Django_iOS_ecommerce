@@ -5,7 +5,7 @@ from . import views
 urlpatterns = [
     # 메인
     path('images/', views.MainImageView.as_view()),
-    path('md/', views.MDProductsView.as_view()),
+    path('md/', views.MDProductsAPIView.as_view()),
     path('recommend/', views.RecommendationAPIView.as_view()),
     path('new/', views.NewAPIView.as_view()),
     path('new/<str:ordering>/', views.NewAPIView.as_view()),

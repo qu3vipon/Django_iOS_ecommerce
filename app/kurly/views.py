@@ -1,5 +1,5 @@
 from django.core.exceptions import ObjectDoesNotExist
-from django.db.models import OuterRef, Subquery, F
+from django.db.models import OuterRef, Subquery, F, Prefetch
 from rest_framework import generics
 from rest_framework import views
 from rest_framework.response import Response
@@ -53,18 +53,18 @@ class MainImageView(views.APIView):
         return Response(result)
 
 
-# 상속을 위한 View (나중에 개선)
+# Abstract View
 class MainAPIView(generics.ListAPIView):
     queryset = Product.objects.all()
     serializer_class = HomeProductsSerializer
 
     def get_queryset(self):
         return Product.objects.prefetch_related(
-            'images'
+            Prefetch('images', queryset=Image.objects.filter(name='thumb'), to_attr='thumb_image')
         )
 
 
-class MDProductsView(MainAPIView):
+class MDProductsAPIView(MainAPIView):
     def get(self, request):
         # Subquery가 될 QuerySet
         sub_products = Product.objects.filter(subcategory=OuterRef('subcategory')).order_by('pk')
@@ -77,15 +77,17 @@ class MDProductsView(MainAPIView):
 
 class RecommendationAPIView(MainAPIView):
     def get_queryset(self):
+        queryset = super().get_queryset()
         count = self.request.query_params.get('count', None)
         if count is None:
-            return Product.objects.order_by('-stock')[:30]
+            return queryset.order_by('-stock')[:30]
         else:
-            return Product.objects.order_by('-stock')[:int(count)]
+            return queryset.order_by('-stock')[:int(count)]
 
 
 class DiscountAPIView(MainAPIView):
     def get_queryset(self):
+        queryset = super().get_queryset()
         count = self.request.query_params.get('count', None)
         try:
             ordering = self.kwargs['ordering']
@@ -93,18 +95,19 @@ class DiscountAPIView(MainAPIView):
                 raise InvalidOrderingException
 
             if count is None:
-                return Product.objects.order_by('-discount_rate', f'{ordering}')[:30]
+                return queryset.order_by('-discount_rate', f'{ordering}')[:30]
             else:
-                return Product.objects.order_by('-discount_rate', f'{ordering}')[:int(count)]
+                return queryset.order_by('-discount_rate', f'{ordering}')[:int(count)]
         except KeyError:
             if count is None:
-                return Product.objects.order_by('-discount_rate')[:30]
+                return queryset.order_by('-discount_rate')[:30]
             else:
-                return Product.objects.order_by('-discount_rate')[:int(count)]
+                return queryset.order_by('-discount_rate')[:int(count)]
 
 
 class NewAPIView(MainAPIView):
     def get_queryset(self):
+        queryset = super().get_queryset()
         count = self.request.query_params.get('count', None)
         try:
             ordering = self.kwargs['ordering']
@@ -112,18 +115,19 @@ class NewAPIView(MainAPIView):
                 raise InvalidOrderingException
 
             if count is None:
-                return Product.objects.order_by('-created_at', f'{ordering}')[:30]
+                return queryset.order_by('-created_at', f'{ordering}')[:30]
             else:
-                return Product.objects.order_by('-created_at', f'{ordering}')[:int(count)]
+                return queryset.order_by('-created_at', f'{ordering}')[:int(count)]
         except KeyError:
             if count is None:
-                return Product.objects.order_by('-created_at')[:30]
+                return queryset.order_by('-created_at')[:30]
             else:
-                return Product.objects.order_by('-created_at')[:int(count)]
+                return queryset.order_by('-created_at')[:int(count)]
 
 
 class BestAPIView(MainAPIView):
     def get_queryset(self):
+        queryset = super().get_queryset()
         count = self.request.query_params.get('count', None)
         try:
             ordering = self.kwargs['ordering']
@@ -131,14 +135,14 @@ class BestAPIView(MainAPIView):
                 raise InvalidOrderingException
 
             if count is None:
-                return Product.objects.order_by('-sales', f'{ordering}')[:30]
+                return queryset.order_by('-sales', f'{ordering}')[:30]
             else:
-                return Product.objects.order_by('-sales', f'{ordering}')[:int(count)]
+                return queryset.objects.order_by('-sales', f'{ordering}')[:int(count)]
         except KeyError:
             if count is None:
-                return Product.objects.order_by('-sales')[:30]
+                return queryset.order_by('-sales')[:30]
             else:
-                return Product.objects.order_by('-sales')[:int(count)]
+                return queryset.order_by('-sales')[:int(count)]
 
 
 # 카테고리 기본정보
@@ -156,7 +160,10 @@ class CategoryAllView(generics.RetrieveAPIView):
     serializer_class = HomeProductsSerializer
 
     def get_queryset(self):
-        return Category.objects.prefetch_related('subcategories__products')
+        return Category.objects.prefetch_related(
+            Prefetch('subcategories__products__images', queryset=Image.objects.filter(name='thumb'),
+                     to_attr='thumb_image')
+        )
 
     def get(self, request, *args, **kwargs):
         result = []
@@ -172,7 +179,9 @@ class SubcategoryDetailView(generics.RetrieveAPIView):
     serializer_class = HomeProductsSerializer
 
     def get_queryset(self):
-        return Subcategory.objects.prefetch_related('products')
+        return Subcategory.objects.prefetch_related(
+            Prefetch('products__images', queryset=Image.objects.filter(name='thumb'), to_attr='thumb_image')
+        )
 
     def get(self, request, *args, **kwargs):
         return Response(HomeProductsSerializer(self.get_object().products, many=True).data)
