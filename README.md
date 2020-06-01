@@ -53,7 +53,7 @@ Token Auth
 
 - InvalidOrderingException : 허용하지 않는 정렬 기준이 입력된 경우
 
-> 신상품에는 '-sales', '-price', 'price', 베스트에는 '-create_at', '-sales', '-price', 'price', 알뜰쇼핑에는 '-created_at', '-sales', '-price', 'price'만 올 수 있음
+> 신상품에는 '-sales', '-price', 'price', 베스트에는 '-create_at', '-price', 'price', 알뜰쇼핑에는 '-created_at', '-sales', '-price', 'price'만 올 수 있음
 
 
 
